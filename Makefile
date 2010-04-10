@@ -7,7 +7,7 @@ DEPENDS=$(SOURCES:.c=.d)
 EXECUTABLES=
 
 .PHONY:all
-all: $(DEPENDS) $(EXECUTABLES)
+all: $(DEPENDS) $(EXECUTABLES) stub_sr
 
 .SECONDEXPANSION:
 $(EXECUTABLES): $$($$@_OBJECTS)
@@ -18,6 +18,10 @@ $(EXECUTABLES): $$($$@_OBJECTS)
 .PHONY:debug
 debug: CFLAGS+=-g -O0
 debug: all
+
+.PHONY:stub_sr
+stub_sr:
+	cd stub_sr; $(MAKE) $(MFLAGS)
 
 .PHONY:profile
 profile: CFLAGS+=-pg -g -fprofile-arcs -ftest-coverage
