@@ -1,0 +1,15 @@
+cscope.out
+gmon.out
+server
+client
+tstfile
+.*.swp
+*.d
+*.o
+*.gcov
+*.gcda
+*.gcno
+
+# Xcode noise
+*.xcodeproj
+build
