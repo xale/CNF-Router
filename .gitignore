@@ -9,6 +9,7 @@ tstfile
 *.gcov
 *.gcda
 *.gcno
+logfile
 
 # Xcode noise
 *.xcodeproj
