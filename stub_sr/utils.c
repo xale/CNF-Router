@@ -92,8 +92,8 @@ int arp_reply(const struct sr_instance *const sr, uint8_t *const packet)
 	memcpy(to, eth_header->ether_shost, ETHER_ADDR_LEN);
 	memcpy(eth_header->ether_shost, from, ETHER_ADDR_LEN);
 	memcpy(eth_header->ether_dhost, to, ETHER_ADDR_LEN);
-	memcpy(arp->ar_sha, to, ETHER_ADDR_LEN);
-	memcpy(arp->ar_tha, from, ETHER_ADDR_LEN);
+	memcpy(arp->ar_sha, from, ETHER_ADDR_LEN);
+	memcpy(arp->ar_tha, to, ETHER_ADDR_LEN);
 	uint32_t tmp = arp->ar_sip;
 	arp->ar_sip = arp->ar_tip;
 	arp->ar_tip = tmp;
