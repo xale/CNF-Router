@@ -66,6 +66,24 @@ void sr_handlepacket(struct sr_instance* sr,
     assert(interface);
 
     printf("*** -> Received packet of length %d \n",len);
+	struct sr_ethernet_hdr header;
+	struct sr_arphdr arp;
+	uint8_t mac[6];
+	memcpy(&header, packet, sizeof(struct sr_ethernet_hdr));
+//	printf("%u == %u\n", header.ether_type, ETHERTYPE_ARP);
+	if (ntohs(header.ether_type) == ETHERTYPE_ARP)
+	{
+		printf("*** -> Received ARP packet.\n");
+		memcpy(&arp, packet + 14, sizeof(struct sr_arphdr));
+		if (ntohs(arp.ar_op) == ARP_REQUEST)
+		{
+			printf("*** -> Received ARP request.\n");
+			get_mac_from_ip(sr, arp.ar_tip, mac);
+			print_mac(mac);
+			get_mac_from_ip(sr, ntohl(arp.ar_tip), mac);
+			print_mac(mac);
+		}
+	}
 
 }/* end sr_ForwardPacket */
 
