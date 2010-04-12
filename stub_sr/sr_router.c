@@ -69,6 +69,7 @@ void sr_handlepacket(struct sr_instance* sr,
 	struct sr_ethernet_hdr header;
 	struct sr_arphdr arp;
 	uint8_t mac[6];
+	int status;
 	memcpy(&header, packet, sizeof(struct sr_ethernet_hdr));
 //	printf("%u == %u\n", header.ether_type, ETHERTYPE_ARP);
 	if (ntohs(header.ether_type) == ETHERTYPE_ARP)
@@ -78,10 +79,16 @@ void sr_handlepacket(struct sr_instance* sr,
 		if (ntohs(arp.ar_op) == ARP_REQUEST)
 		{
 			printf("*** -> Received ARP request.\n");
-			get_mac_from_ip(sr, arp.ar_tip, mac);
-			print_mac(mac);
-			get_mac_from_ip(sr, ntohl(arp.ar_tip), mac);
-			print_mac(mac);
+			status = arp_reply(sr, packet);
+			if (status != 0)
+			{
+				printf("*** -> Error constructing ARP reply.\n");
+			}
+			else
+			{
+				sr_send_packet(sr, packet, 42, interface);
+				printf("*** -> Sent ARP reply.\n");
+			}
 		}
 	}
 
