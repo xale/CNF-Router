@@ -252,6 +252,7 @@ static void sr_init_instance(struct sr_instance* sr)
     sr->if_list = 0;
     sr->routing_table = 0;
     sr->logfile = 0;
+	sr->arp_cache = malloc(sizeof(struct arp_table)); // hope it's not null
 } /* -- sr_init_instance -- */
 
 /*-----------------------------------------------------------------------------

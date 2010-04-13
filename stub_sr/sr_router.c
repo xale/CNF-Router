@@ -66,17 +66,19 @@ void sr_handlepacket(struct sr_instance* sr,
     assert(interface);
 
     printf("*** -> Received packet of length %d on interface %s.\n", len, interface);
-	struct sr_ethernet_hdr header;
-	struct sr_arphdr arp;
+	struct sr_ethernet_hdr *header = (struct sr_ethernet_hdr *) packet;
+	struct sr_arphdr *arp = (struct sr_arphdr *) (packet + sizeof(struct sr_ethernet_hdr));
+	struct ip *ip = (struct ip *) (packet + sizeof(struct sr_ethernet_hdr));
+
 	uint8_t mac[6];
 	int status;
-	memcpy(&header, packet, sizeof(struct sr_ethernet_hdr));
 //	printf("%u == %u\n", header.ether_type, ETHERTYPE_ARP);
-	if (ntohs(header.ether_type) == ETHERTYPE_ARP)
+	if (ntohs(header->ether_type) == ETHERTYPE_ARP)
 	{
 		printf("*** -> Received ARP packet.\n");
-		memcpy(&arp, packet + 14, sizeof(struct sr_arphdr));
-		if (ntohs(arp.ar_op) == ARP_REQUEST)
+		printf("*** -> Adding to cache.\n");
+		add_to_cache(sr->arp_cache, packet);
+		if (ntohs(arp->ar_op) == ARP_REQUEST)
 		{
 			printf("*** -> Received ARP request.\n");
 			status = arp_reply(sr, packet);
