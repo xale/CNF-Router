@@ -33,8 +33,9 @@ void print_ip(const uint32_t ip)
 	printf("\n");
 }
 
-int get_interface_from_ip(const struct sr_instance *const sr, const uint32_t ip, const struct sr_if *iface)
+struct sr_if* get_interface_from_ip(const struct sr_instance *const sr, const uint32_t ip)
 {
+	const struct sr_if *iface;
 	printf("Trying to match against: ");
 	print_ip(ip);
 	for(
@@ -46,14 +47,7 @@ int get_interface_from_ip(const struct sr_instance *const sr, const uint32_t ip,
 		printf("Failed match against: ");
 		print_ip(iface->ip);
 	}
-	if (iface == NULL) // we don't know
-	{
-		return -1;
-	}
-	else
-	{
-		return 0;
-	}
+	return iface;
 }
 
 uint32_t get_ip_from_mac(const struct sr_instance *const sr, const uint8_t *const mac)
@@ -236,13 +230,13 @@ int arp_reply(const struct sr_instance *const sr, uint8_t *const packet)
 	struct sr_ethernet_hdr *eth_header = (struct sr_ethernet_hdr *) packet;
 	struct sr_arphdr *arp = (struct sr_arphdr *) (packet + sizeof(struct sr_ethernet_hdr));
 	uint8_t to[ETHER_ADDR_LEN];
-	const struct sr_if iface;
-	int status = get_interface_from_ip(sr, arp->ar_tip, &iface);
-	if (status != 0)
+	const struct sr_if *iface;
+	iface = get_interface_from_ip(sr, arp->ar_tip);
+	if (iface == NULL)
 	{
-		return status;
+		return -1;
 	}
-	const uint8_t *const from = iface.addr;
+	const uint8_t *const from = iface->addr;
 	memcpy(to, eth_header->ether_shost, ETHER_ADDR_LEN);
 	memcpy(eth_header->ether_shost, from, ETHER_ADDR_LEN);
 	memcpy(eth_header->ether_dhost, to, ETHER_ADDR_LEN);
