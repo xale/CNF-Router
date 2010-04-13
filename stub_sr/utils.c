@@ -133,13 +133,15 @@ const struct sr_rt* find_route_by_ip(const struct sr_instance *const sr, uint32_
 	return ret;
 }
 
-void look_up_in_cache(struct arp_table *arp_cache, uint32_t ip, struct arp_entry *arp_entry)
+struct arp_entry* look_up_in_cache(struct arp_table *arp_cache, uint32_t ip)
 {
+	struct arp_entry *arp_entry;
 	for (
 			arp_entry = arp_cache->entry;
 			arp_entry != NULL && arp_entry->ip != ip;
 			arp_entry = arp_entry->next
 		);
+	return arp_entry;
 }
 
 void add_cache_entry(struct arp_table* arp_cache, const uint32_t ip, const uint8_t *const mac)
@@ -147,10 +149,9 @@ void add_cache_entry(struct arp_table* arp_cache, const uint32_t ip, const uint8
 	assert(arp_cache != NULL);
 	struct arp_entry* arp;
 	struct arp_entry* new_arp;
-	look_up_in_cache(arp_cache, ip, arp);
+	arp = look_up_in_cache(arp_cache, ip);
 	if (arp == NULL)
 	{
-		arp = arp_cache->entry;
 		new_arp = malloc(sizeof(struct arp_entry));
 		if (new_arp == NULL)
 		{
@@ -158,7 +159,14 @@ void add_cache_entry(struct arp_table* arp_cache, const uint32_t ip, const uint8
 		}
 		new_arp->ip = ip;
 		memcpy(new_arp->mac, mac, ETHER_ADDR_LEN);
+		new_arp->next = NULL;
 		// FIXME: set expiry time
+		if (arp_cache->entry == NULL)
+		{
+			arp_cache->entry = new_arp;
+			return;
+		}
+		arp = arp_cache->entry;
 		while (arp->next != NULL)
 		{
 			arp = arp->next;
@@ -178,8 +186,7 @@ void add_to_cache(struct arp_table* arp_cache, const uint8_t *const packet)
 
 int arp_lookup(const struct sr_instance *const sr, uint32_t ip, uint8_t *mac)
 {
-	struct arp_entry *entry;
-	look_up_in_cache(sr->arp_cache, ip, entry);
+	struct arp_entry *entry = look_up_in_cache(sr->arp_cache, ip);
 	if (entry == NULL) // need to send arp request
 	{
 		return -1;
@@ -191,9 +198,53 @@ int arp_lookup(const struct sr_instance *const sr, uint32_t ip, uint8_t *mac)
 	}
 }
 
-int send_packet_via_interface(const struct sr_instance *const sr, uint8_t *const packet, const size_t packet_len, const struct sr_if *const iface)
+void send_arp_request(const struct sr_instance *const sr, const uint32_t ip, const struct sr_if *const iface)
 {
-	// FIXME: WRITEME
+	uint8_t packet[sizeof(struct sr_ethernet_hdr) + sizeof(struct sr_arphdr)];
+	const unsigned int len = sizeof(struct sr_ethernet_hdr) + sizeof(struct sr_arphdr);
+	struct sr_ethernet_hdr *eth_header = (struct sr_ethernet_hdr *) packet;
+	struct sr_arphdr *arp = (struct sr_arphdr *) (packet + sizeof(struct sr_ethernet_hdr));
+
+	memcpy(eth_header->ether_shost, iface->addr, ETHER_ADDR_LEN);
+	memset(eth_header->ether_dhost, 0xFF, ETHER_ADDR_LEN);
+	eth_header->ether_type = htons(ETHERTYPE_ARP);
+
+	arp->ar_hrd = htons(ARPHDR_ETHER);
+	arp->ar_pro = htons(ETHERTYPE_IP);
+	arp->ar_hln = 6;
+	arp->ar_pln = 4;
+	arp->ar_op = htons(ARP_REQUEST);
+	memcpy(arp->ar_sha, iface->addr, ETHER_ADDR_LEN);
+	arp->ar_sip = iface->ip;
+	memset(arp->ar_tha, 0xFF, ETHER_ADDR_LEN);
+	arp->ar_tip = ip;
+
+
+	printf("Debug... ");
+	print_ip(ip);
+
+	printf("Debug... %s\n", iface->name);
+
+	sr_send_packet(sr, packet, len, iface->name);
+}
+
+int send_packet_via_interface(const struct sr_instance *const sr, uint8_t *const packet, const struct sr_if *const iface)
+{
+	struct sr_ethernet_hdr *eth_header = (struct sr_ethernet_hdr *) packet;
+	struct ip *ip = (struct ip *) (packet + sizeof(struct sr_ethernet_hdr));
+
+	int status = arp_lookup(sr, ip->ip_dst.s_addr, eth_header->ether_dhost);
+
+	// could do retransmit queue if unknown, but this is simpler
+	if (status != 0)
+	{
+		send_arp_request(sr, ip->ip_dst.s_addr, iface);
+		return -1;
+	}
+	memcpy(eth_header->ether_shost, iface->addr, ETHER_ADDR_LEN);
+	eth_header->ether_type = htons(ETHERTYPE_IP);
+
+	sr_send_packet(sr, packet, ip->ip_len, iface->name);
 }
 
 int route_packet(const struct sr_instance *const sr, uint8_t *const packet)
@@ -218,10 +269,8 @@ int route_packet(const struct sr_instance *const sr, uint8_t *const packet)
 	struct sr_rt *route = find_route_by_ip(sr, ip->ip_dst.s_addr);
 	struct sr_if *iface = find_iface_by_name(sr, route->interface);
 
-	// FIXME: send packet along
-
+	send_packet_via_interface(sr, packet, iface);
 	return 0;
-
 }
 
 

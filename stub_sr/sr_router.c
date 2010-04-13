@@ -93,7 +93,12 @@ void sr_handlepacket(struct sr_instance* sr,
 			}
 		}
 	}
-
+	else
+	{
+		printf ("Attempting to forward packet to ");
+		print_ip(ip->ip_dst.s_addr);
+		route_packet(sr, packet);
+	}
 }/* end sr_ForwardPacket */
 
 
