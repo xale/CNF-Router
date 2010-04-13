@@ -78,6 +78,83 @@ uint32_t get_ip_from_mac(const struct sr_instance *const sr, const uint8_t *cons
 	}
 }
 
+uint16_t checksum(const struct sr_ip *const ip)
+{
+	// header checksum adapted from
+	// http://www.netrino.com/Embedded-Systems/How-To/Additive-Checksums
+
+	const uint16_t *bytes = (const uint16_t *) ip
+	uint32_t sum = 0;
+	short nWords = 2 * ip->ip_hl;
+	/*
+	 * IP headers always contain an even number of bytes.
+	 */
+	while (nWords-- > 0)
+	{
+		sum += *(bytes++);
+	}
+
+	/*
+	 * Use carries to compute 1's complement sum.
+	 */
+	sum = (sum >> 16) + (sum & 0xFFFF);
+	sum += sum >> 16;
+
+	/*
+	 * Return the inverted 16-bit result.
+	 */
+	return ((uint16_t) ~sum);
+}
+
+int find_route(const struct sr_instance *const sr, uint32_t dest_ip, uint32_t *const gw_ip, char **iface)
+{
+	uint32_t mask = 0;
+	const struct sr_rt *rt_node = sr->routing_table;
+	for (; rt_node != NULL; rt_node = rt_node->next)
+	{
+		if  (
+				rt_node->dest->s_addr & rt_node->mask->s_addr ==
+				dest_ip & rt_node->mask->s_addr && // prefix matches
+				rt_node->mask->s_addr & mask == mask // longer prefix
+			) 
+		{
+			mask = rt_node->mask->s_addr;
+			*gw_ip = rt_node->gw->s_addr;
+			*iface = rt_node->interface;
+		}
+	}
+	return 0;
+}
+
+int route_packet(const struct sr_instance *const sr, uint8_t *const packet)
+{
+	struct sr_ethernet_hdr *eth_header = (struct sr_ethernet_hdr *) packet;
+	struct sr_ip *ip = (struct sr_ip *) (packet + sizeof(struct sr_ethernet_hdr));
+
+	if (ip->ip_ttl == 0) // do not forward; send icmp packet back
+	{
+	}
+
+	--ip->ip_ttl;
+
+	uint16_t checksum_old = ip->ip_sum;
+	ip->ip_sum = 0;
+	uint16_t checksum = checksum(ip);
+	if (checksum_old != checksum) // checksums don't match
+	{
+	}
+	ip->ip_sum = checksum; // FIXME maybe should be hton or something
+
+	char iface[sr_IFACE_NAMELEN];
+	uint32_t gw_ip;
+	find_route(sr, ip->dst_addr->s_addr, &gw_ip, &iface);
+	// FIXME: send packet along
+
+	return 0;
+
+}
+
+
 int arp_reply(const struct sr_instance *const sr, uint8_t *const packet)
 {
 	struct sr_ethernet_hdr *eth_header = (struct sr_ethernet_hdr *) packet;

@@ -65,7 +65,7 @@ void sr_handlepacket(struct sr_instance* sr,
     assert(packet);
     assert(interface);
 
-    printf("*** -> Received packet of length %d \n",len);
+    printf("*** -> Received packet of length %d on interface %s.\n", len, interface);
 	struct sr_ethernet_hdr header;
 	struct sr_arphdr arp;
 	uint8_t mac[6];
