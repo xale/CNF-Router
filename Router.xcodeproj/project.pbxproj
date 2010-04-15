@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6A578A4B1176A4280085F1E7 /* sr_arp.c in Sources */ = {isa = PBXBuildFile; fileRef = 6A578A461176A4280085F1E7 /* sr_arp.c */; };
+		6A578A4C1176A4280085F1E7 /* sr_ip_packet.c in Sources */ = {isa = PBXBuildFile; fileRef = 6A578A481176A4280085F1E7 /* sr_ip_packet.c */; };
+		6ABC0C781175248B006878F8 /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 6ABC0C771175248B006878F8 /* utils.c */; };
 		6ADF452611712EB300911A71 /* sha1.c in Sources */ = {isa = PBXBuildFile; fileRef = 6ADF451711712EB300911A71 /* sha1.c */; };
 		6ADF452711712EB300911A71 /* sr_dumper.c in Sources */ = {isa = PBXBuildFile; fileRef = 6ADF451911712EB300911A71 /* sr_dumper.c */; };
 		6ADF452811712EB300911A71 /* sr_if.c in Sources */ = {isa = PBXBuildFile; fileRef = 6ADF451B11712EB300911A71 /* sr_if.c */; };
@@ -33,21 +36,27 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		6A578A461176A4280085F1E7 /* sr_arp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sr_arp.c; path = stub_sr/sr_arp.c; sourceTree = "<group>"; };
+		6A578A471176A4280085F1E7 /* sr_arp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sr_arp.h; path = stub_sr/sr_arp.h; sourceTree = "<group>"; };
+		6A578A481176A4280085F1E7 /* sr_ip_packet.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sr_ip_packet.c; path = stub_sr/sr_ip_packet.c; sourceTree = "<group>"; };
+		6A578A491176A4280085F1E7 /* sr_ip_packet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sr_ip_packet.h; path = stub_sr/sr_ip_packet.h; sourceTree = "<group>"; };
+		6A578A4A1176A4280085F1E7 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = utils.h; path = stub_sr/utils.h; sourceTree = "<group>"; };
+		6ABC0C771175248B006878F8 /* utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = utils.c; path = stub_sr/utils.c; sourceTree = "<group>"; };
 		6ADF44FE11712E7100911A71 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
-		6ADF451711712EB300911A71 /* sha1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sha1.c; sourceTree = "<group>"; };
-		6ADF451811712EB300911A71 /* sha1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sha1.h; sourceTree = "<group>"; };
-		6ADF451911712EB300911A71 /* sr_dumper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sr_dumper.c; sourceTree = "<group>"; };
-		6ADF451A11712EB300911A71 /* sr_dumper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sr_dumper.h; sourceTree = "<group>"; };
-		6ADF451B11712EB300911A71 /* sr_if.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sr_if.c; sourceTree = "<group>"; };
-		6ADF451C11712EB300911A71 /* sr_if.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sr_if.h; sourceTree = "<group>"; };
-		6ADF451D11712EB300911A71 /* sr_main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sr_main.c; sourceTree = "<group>"; };
-		6ADF451E11712EB300911A71 /* sr_protocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sr_protocol.h; sourceTree = "<group>"; };
-		6ADF451F11712EB300911A71 /* sr_router.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sr_router.c; sourceTree = "<group>"; };
-		6ADF452011712EB300911A71 /* sr_router.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sr_router.h; sourceTree = "<group>"; };
-		6ADF452111712EB300911A71 /* sr_rt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sr_rt.c; sourceTree = "<group>"; };
-		6ADF452211712EB300911A71 /* sr_rt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sr_rt.h; sourceTree = "<group>"; };
-		6ADF452311712EB300911A71 /* sr_vns_comm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sr_vns_comm.c; sourceTree = "<group>"; };
-		6ADF452411712EB300911A71 /* vnscommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vnscommand.h; sourceTree = "<group>"; };
+		6ADF451711712EB300911A71 /* sha1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sha1.c; path = stub_sr/sha1.c; sourceTree = "<group>"; };
+		6ADF451811712EB300911A71 /* sha1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sha1.h; path = stub_sr/sha1.h; sourceTree = "<group>"; };
+		6ADF451911712EB300911A71 /* sr_dumper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sr_dumper.c; path = stub_sr/sr_dumper.c; sourceTree = "<group>"; };
+		6ADF451A11712EB300911A71 /* sr_dumper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sr_dumper.h; path = stub_sr/sr_dumper.h; sourceTree = "<group>"; };
+		6ADF451B11712EB300911A71 /* sr_if.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sr_if.c; path = stub_sr/sr_if.c; sourceTree = "<group>"; };
+		6ADF451C11712EB300911A71 /* sr_if.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sr_if.h; path = stub_sr/sr_if.h; sourceTree = "<group>"; };
+		6ADF451D11712EB300911A71 /* sr_main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sr_main.c; path = stub_sr/sr_main.c; sourceTree = "<group>"; };
+		6ADF451E11712EB300911A71 /* sr_protocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sr_protocol.h; path = stub_sr/sr_protocol.h; sourceTree = "<group>"; };
+		6ADF451F11712EB300911A71 /* sr_router.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sr_router.c; path = stub_sr/sr_router.c; sourceTree = "<group>"; };
+		6ADF452011712EB300911A71 /* sr_router.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sr_router.h; path = stub_sr/sr_router.h; sourceTree = "<group>"; };
+		6ADF452111712EB300911A71 /* sr_rt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sr_rt.c; path = stub_sr/sr_rt.c; sourceTree = "<group>"; };
+		6ADF452211712EB300911A71 /* sr_rt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sr_rt.h; path = stub_sr/sr_rt.h; sourceTree = "<group>"; };
+		6ADF452311712EB300911A71 /* sr_vns_comm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sr_vns_comm.c; path = stub_sr/sr_vns_comm.c; sourceTree = "<group>"; };
+		6ADF452411712EB300911A71 /* vnscommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vnscommand.h; path = stub_sr/vnscommand.h; sourceTree = "<group>"; };
 		6AFE1CBC1171397600364BC4 /* auth_key */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = auth_key; path = stub_sr/auth_key; sourceTree = "<group>"; };
 		6AFE1CBD1171397600364BC4 /* rtable */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = rtable; path = stub_sr/rtable; sourceTree = "<group>"; };
 		8DD76FB20486AB0100D96B5E /* Router */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Router; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -78,8 +87,10 @@
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				6A612B7A11726557008B9EE2 /* router */,
-				6ADF451411712EB300911A71 /* stub_sr */,
+				6ADF451D11712EB300911A71 /* sr_main.c */,
+				6A578A511176A5210085F1E7 /* Router */,
+				6A578A4D1176A4360085F1E7 /* Packets */,
+				6A578A4E1176A4420085F1E7 /* Miscellaneous */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -92,32 +103,60 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		6A612B7A11726557008B9EE2 /* router */ = {
+		6A578A4D1176A4360085F1E7 /* Packets */ = {
 			isa = PBXGroup;
 			children = (
+				6A578A471176A4280085F1E7 /* sr_arp.h */,
+				6A578A461176A4280085F1E7 /* sr_arp.c */,
+				6A578A491176A4280085F1E7 /* sr_ip_packet.h */,
+				6A578A481176A4280085F1E7 /* sr_ip_packet.c */,
 			);
-			path = router;
+			name = Packets;
 			sourceTree = "<group>";
 		};
-		6ADF451411712EB300911A71 /* stub_sr */ = {
+		6A578A4E1176A4420085F1E7 /* Miscellaneous */ = {
 			isa = PBXGroup;
 			children = (
-				6ADF451711712EB300911A71 /* sha1.c */,
-				6ADF451811712EB300911A71 /* sha1.h */,
-				6ADF451911712EB300911A71 /* sr_dumper.c */,
-				6ADF451A11712EB300911A71 /* sr_dumper.h */,
-				6ADF451B11712EB300911A71 /* sr_if.c */,
-				6ADF451C11712EB300911A71 /* sr_if.h */,
-				6ADF451D11712EB300911A71 /* sr_main.c */,
-				6ADF451E11712EB300911A71 /* sr_protocol.h */,
-				6ADF451F11712EB300911A71 /* sr_router.c */,
-				6ADF452011712EB300911A71 /* sr_router.h */,
-				6ADF452111712EB300911A71 /* sr_rt.c */,
-				6ADF452211712EB300911A71 /* sr_rt.h */,
-				6ADF452311712EB300911A71 /* sr_vns_comm.c */,
-				6ADF452411712EB300911A71 /* vnscommand.h */,
+				6A578A4F1176A47F0085F1E7 /* Ours */,
+				6A578A501176A48B0085F1E7 /* Theirs */,
 			);
-			path = stub_sr;
+			name = Miscellaneous;
+			sourceTree = "<group>";
+		};
+		6A578A4F1176A47F0085F1E7 /* Ours */ = {
+			isa = PBXGroup;
+			children = (
+				6A578A4A1176A4280085F1E7 /* utils.h */,
+				6ABC0C771175248B006878F8 /* utils.c */,
+			);
+			name = Ours;
+			sourceTree = "<group>";
+		};
+		6A578A501176A48B0085F1E7 /* Theirs */ = {
+			isa = PBXGroup;
+			children = (
+				6ADF451811712EB300911A71 /* sha1.h */,
+				6ADF451711712EB300911A71 /* sha1.c */,
+				6ADF451A11712EB300911A71 /* sr_dumper.h */,
+				6ADF451911712EB300911A71 /* sr_dumper.c */,
+				6ADF452411712EB300911A71 /* vnscommand.h */,
+				6ADF452311712EB300911A71 /* sr_vns_comm.c */,
+			);
+			name = Theirs;
+			sourceTree = "<group>";
+		};
+		6A578A511176A5210085F1E7 /* Router */ = {
+			isa = PBXGroup;
+			children = (
+				6ADF451E11712EB300911A71 /* sr_protocol.h */,
+				6ADF451C11712EB300911A71 /* sr_if.h */,
+				6ADF451B11712EB300911A71 /* sr_if.c */,
+				6ADF452011712EB300911A71 /* sr_router.h */,
+				6ADF451F11712EB300911A71 /* sr_router.c */,
+				6ADF452211712EB300911A71 /* sr_rt.h */,
+				6ADF452111712EB300911A71 /* sr_rt.c */,
+			);
+			name = Router;
 			sourceTree = "<group>";
 		};
 		6ADF455E117136BB00911A71 /* Resources */ = {
@@ -195,6 +234,9 @@
 				6ADF452A11712EB300911A71 /* sr_router.c in Sources */,
 				6ADF452B11712EB300911A71 /* sr_rt.c in Sources */,
 				6ADF452C11712EB300911A71 /* sr_vns_comm.c in Sources */,
+				6ABC0C781175248B006878F8 /* utils.c in Sources */,
+				6A578A4B1176A4280085F1E7 /* sr_arp.c in Sources */,
+				6A578A4C1176A4280085F1E7 /* sr_ip_packet.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
