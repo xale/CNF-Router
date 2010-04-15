@@ -194,7 +194,7 @@ void sr_print_if(struct sr_if* iface)
     Debug("\tinet addr %s\n",inet_ntoa(ip_addr));
 } /* -- sr_print_if -- */
 
-struct sr_if* get_interface_from_ip(const struct sr_instance *const sr, const uint32_t ip)
+const struct sr_if* get_interface_from_ip(const struct sr_instance *const sr, const uint32_t ip)
 {
 	const struct sr_if *iface;
 	printf("Trying to match against: ");
@@ -211,7 +211,7 @@ struct sr_if* get_interface_from_ip(const struct sr_instance *const sr, const ui
 	return iface;
 }
 
-struct sr_if* get_iface_from_mac(const struct sr_instance *const sr, const uint8_t *const mac)
+const struct sr_if* get_iface_from_mac(const struct sr_instance *const sr, const uint8_t *const mac)
 {
 	print_mac(mac);
 	const struct sr_if* iface;

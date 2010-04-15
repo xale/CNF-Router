@@ -1,5 +1,12 @@
-#include <stdint.h>
 #include <stdio.h>
+
+#ifdef _LINUX_
+#include <stdint.h>
+#endif
+
+#ifdef _DARWIN_
+#include <inttypes.h>
+#endif
 
 void print_mac(const uint8_t *mac)
 {
