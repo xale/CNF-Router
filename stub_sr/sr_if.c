@@ -24,6 +24,7 @@
 
 #include "sr_if.h"
 #include "sr_router.h"
+#include "utils.h"
 
 /*--------------------------------------------------------------------- 
  * Method: sr_get_interface
@@ -192,3 +193,45 @@ void sr_print_if(struct sr_if* iface)
     Debug("\n");
     Debug("\tinet addr %s\n",inet_ntoa(ip_addr));
 } /* -- sr_print_if -- */
+
+struct sr_if* get_interface_from_ip(const struct sr_instance *const sr, const uint32_t ip)
+{
+	const struct sr_if *iface;
+	printf("Trying to match against: ");
+	print_ip(ip);
+	for(
+			iface = sr->if_list;
+			iface != NULL && iface->ip != ip;
+			iface = iface->next
+	   )
+	{
+		printf("Failed match against: ");
+		print_ip(iface->ip);
+	}
+	return iface;
+}
+
+// FIXME
+// This function is silly; should instead return a struct sr_if*
+uint32_t get_ip_from_mac(const struct sr_instance *const sr, const uint8_t *const mac)
+{
+	print_mac(mac);
+	const struct sr_if* iface;
+	for(
+			iface = sr->if_list;
+			iface != NULL && memcmp(iface->addr, mac, ETHER_ADDR_LEN) != 0;
+			iface = iface->next
+	   )
+	{
+		printf("Failed match with ");
+		print_mac(iface->addr);
+	}
+	if (iface == NULL) // we don't know
+	{
+		return 0;
+	}
+	else
+	{
+		return iface->ip;
+	}
+}

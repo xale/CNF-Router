@@ -14,7 +14,6 @@
 #include <stdio.h>
 
 #include "sr_protocol.h"
-#include "sr_arp_cache.h"
 
 /* we dont like this debug , but what to do for varargs ? */
 #ifdef _DEBUG_
@@ -33,6 +32,7 @@
 /* forward declare */
 struct sr_if;
 struct sr_rt;
+struct arp_table;
 
 /* ----------------------------------------------------------------------------
  * struct sr_instance

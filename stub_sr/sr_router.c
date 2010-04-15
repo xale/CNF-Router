@@ -19,6 +19,9 @@
 #include "sr_rt.h"
 #include "sr_router.h"
 #include "sr_protocol.h"
+#include "sr_arp.h"
+#include "sr_ip_packet.h"
+#include "utils.c"
 
 /*--------------------------------------------------------------------- 
  * Method: sr_init(void)
@@ -97,7 +100,7 @@ void sr_handlepacket(struct sr_instance* sr,
 	{
 		printf ("Attempting to forward packet to ");
 		print_ip(ip->ip_dst.s_addr);
-		route_packet(sr, packet);
+		forward_ip_packet(sr, packet);
 	}
 }/* end sr_ForwardPacket */
 
