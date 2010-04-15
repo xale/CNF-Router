@@ -139,8 +139,6 @@
 				6ADF451711712EB300911A71 /* sha1.c */,
 				6ADF451A11712EB300911A71 /* sr_dumper.h */,
 				6ADF451911712EB300911A71 /* sr_dumper.c */,
-				6ADF452411712EB300911A71 /* vnscommand.h */,
-				6ADF452311712EB300911A71 /* sr_vns_comm.c */,
 			);
 			name = Theirs;
 			sourceTree = "<group>";
@@ -153,6 +151,8 @@
 				6ADF451B11712EB300911A71 /* sr_if.c */,
 				6ADF452011712EB300911A71 /* sr_router.h */,
 				6ADF451F11712EB300911A71 /* sr_router.c */,
+				6ADF452411712EB300911A71 /* vnscommand.h */,
+				6ADF452311712EB300911A71 /* sr_vns_comm.c */,
 				6ADF452211712EB300911A71 /* sr_rt.h */,
 				6ADF452111712EB300911A71 /* sr_rt.c */,
 			);

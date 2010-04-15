@@ -9,7 +9,7 @@
 #include "sr_protocol.h"
 #include "sr_arp.h"
 
-struct arp_entry* look_up_in_cache(struct arp_table *arp_cache, uint32_t ip)
+struct arp_entry* look_up_in_cache(const struct arp_table *arp_cache, uint32_t ip)
 {
 	struct arp_entry *arp_entry;
 	for (
@@ -74,7 +74,7 @@ int arp_lookup(const struct sr_instance *const sr, uint32_t ip, uint8_t *mac)
 	}
 }
 
-void send_arp_request(const struct sr_instance *const sr, const uint32_t ip, const struct sr_if *const iface)
+void send_arp_request(struct sr_instance * sr, const uint32_t ip, const struct sr_if *const iface)
 {
 	uint8_t packet[sizeof(struct sr_ethernet_hdr) + sizeof(struct sr_arphdr)];
 	const unsigned int len = sizeof(struct sr_ethernet_hdr) + sizeof(struct sr_arphdr);

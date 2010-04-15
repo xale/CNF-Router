@@ -37,7 +37,7 @@ uint16_t checksum(const struct ip *const ip)
 	return ((uint16_t) ~sum);
 }
 
-int send_ip_packet_via_interface(const struct sr_instance *const sr, uint8_t *const packet, const struct sr_if *const iface)
+int send_ip_packet_via_interface(struct sr_instance * sr, uint8_t *const packet, const struct sr_if *const iface)
 {
 	struct sr_ethernet_hdr *eth_header = (struct sr_ethernet_hdr *) packet;
 	struct ip *ip = (struct ip *) (packet + sizeof(struct sr_ethernet_hdr));
@@ -54,9 +54,11 @@ int send_ip_packet_via_interface(const struct sr_instance *const sr, uint8_t *co
 	eth_header->ether_type = htons(ETHERTYPE_IP);
 
 	sr_send_packet(sr, packet, ip->ip_len, iface->name);
+	
+	return 0;
 }
 
-int forward_ip_packet(const struct sr_instance *const sr, uint8_t *const packet)
+int forward_ip_packet(struct sr_instance * sr, uint8_t *const packet)
 {
 	struct sr_ethernet_hdr *eth_header = (struct sr_ethernet_hdr *) packet;
 	struct ip *ip = (struct ip *) (packet + sizeof(struct sr_ethernet_hdr));
