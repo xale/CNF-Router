@@ -32,7 +32,7 @@ ARCH = -D_DARWIN_
 SOCK = -lresolv
 endif
 
-CFLAGS = -g -Wall -std=gnu99 -D_DEBUG_ $(ARCH)
+CFLAGS = -g -Wall -Wextra -std=gnu99 -D_DEBUG_ $(ARCH)
 
 LIBS= $(SOCK) -lm
 PFLAGS= -follow-child-processes=yes -cache-dir=/tmp/${USER}
@@ -40,7 +40,8 @@ PURIFY= purify ${PFLAGS}
 
 sr_SRCS = sr_router.c sr_main.c  \
           sr_if.c sr_rt.c sr_vns_comm.c   \
-          sr_dumper.c sha1.c
+          sr_dumper.c sha1.c utils.c	\
+		  sr_arp.c sr_ip_packet.c
 
 sr_OBJS = $(patsubst %.c,%.o,$(sr_SRCS))
 sr_DEPS = $(patsubst %.c,.%.d,$(sr_SRCS))
