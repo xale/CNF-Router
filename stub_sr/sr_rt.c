@@ -169,3 +169,23 @@ void sr_print_routing_entry(struct sr_rt* entry)
     printf("%s\n",entry->interface);
 
 } /* -- sr_print_routing_entry -- */
+
+struct sr_rt* find_route_by_ip(const struct sr_instance *const sr, uint32_t dest_ip)
+{
+	uint32_t mask = 0;
+	struct sr_rt *rt_node = sr->routing_table;
+	struct sr_rt *ret = NULL;
+	for (; rt_node != NULL; rt_node = rt_node->next)
+	{
+		if  (
+				((rt_node->dest.s_addr & rt_node->mask.s_addr) ==
+				 (dest_ip & rt_node->mask.s_addr)) && // prefix matches
+				((rt_node->mask.s_addr & mask) == mask) // longer prefix
+			) 
+		{
+			mask = rt_node->mask.s_addr;
+			ret = rt_node;
+		}
+	}
+	return ret;
+}

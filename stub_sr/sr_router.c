@@ -19,6 +19,9 @@
 #include "sr_rt.h"
 #include "sr_router.h"
 #include "sr_protocol.h"
+#include "sr_arp.h"
+#include "sr_ip_packet.h"
+#include "utils.h"
 
 /*--------------------------------------------------------------------- 
  * Method: sr_init(void)
@@ -65,8 +68,40 @@ void sr_handlepacket(struct sr_instance* sr,
     assert(packet);
     assert(interface);
 
-    printf("*** -> Received packet of length %d \n",len);
+    printf("*** -> Received packet of length %d on interface %s.\n", len, interface);
+	struct sr_ethernet_hdr *header = (struct sr_ethernet_hdr *) packet;
+	struct sr_arphdr *arp = (struct sr_arphdr *) (packet + sizeof(struct sr_ethernet_hdr));
+	struct ip *ip = (struct ip *) (packet + sizeof(struct sr_ethernet_hdr));
 
+	uint8_t mac[6];
+	int status;
+//	printf("%u == %u\n", header.ether_type, ETHERTYPE_ARP);
+	if (ntohs(header->ether_type) == ETHERTYPE_ARP)
+	{
+		printf("*** -> Received ARP packet.\n");
+		printf("*** -> Adding to cache.\n");
+		add_to_cache(sr->arp_cache, packet);
+		if (ntohs(arp->ar_op) == ARP_REQUEST)
+		{
+			printf("*** -> Received ARP request.\n");
+			status = arp_reply(sr, packet);
+			if (status != 0)
+			{
+				printf("*** -> Error constructing ARP reply.\n");
+			}
+			else
+			{
+				sr_send_packet(sr, packet, 42, interface);
+				printf("*** -> Sent ARP reply.\n");
+			}
+		}
+	}
+	else
+	{
+		printf ("Attempting to forward packet to ");
+		print_ip(ip->ip_dst.s_addr);
+		forward_ip_packet(sr, packet);
+	}
 }/* end sr_ForwardPacket */
 
 
