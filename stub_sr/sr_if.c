@@ -211,9 +211,7 @@ struct sr_if* get_interface_from_ip(const struct sr_instance *const sr, const ui
 	return iface;
 }
 
-// FIXME
-// This function is silly; should instead return a struct sr_if*
-uint32_t get_ip_from_mac(const struct sr_instance *const sr, const uint8_t *const mac)
+struct sr_if* get_iface_from_mac(const struct sr_instance *const sr, const uint8_t *const mac)
 {
 	print_mac(mac);
 	const struct sr_if* iface;
@@ -226,12 +224,5 @@ uint32_t get_ip_from_mac(const struct sr_instance *const sr, const uint8_t *cons
 		printf("Failed match with ");
 		print_mac(iface->addr);
 	}
-	if (iface == NULL) // we don't know
-	{
-		return 0;
-	}
-	else
-	{
-		return iface->ip;
-	}
+	return iface;
 }

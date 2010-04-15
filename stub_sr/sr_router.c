@@ -21,7 +21,7 @@
 #include "sr_protocol.h"
 #include "sr_arp.h"
 #include "sr_ip_packet.h"
-#include "utils.c"
+#include "utils.h"
 
 /*--------------------------------------------------------------------- 
  * Method: sr_init(void)

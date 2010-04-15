@@ -32,7 +32,7 @@ ARCH = -D_DARWIN_
 SOCK = -lresolv
 endif
 
-CFLAGS = -g -Wall -std=gnu99 -D_DEBUG_ $(ARCH)
+CFLAGS = -g -Wall -Wextra -std=gnu99 -D_DEBUG_ $(ARCH)
 
 LIBS= $(SOCK) -lm
 PFLAGS= -follow-child-processes=yes -cache-dir=/tmp/${USER}
