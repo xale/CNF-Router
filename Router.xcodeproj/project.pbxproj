@@ -17,6 +17,7 @@
 		6ADF452A11712EB300911A71 /* sr_router.c in Sources */ = {isa = PBXBuildFile; fileRef = 6ADF451F11712EB300911A71 /* sr_router.c */; };
 		6ADF452B11712EB300911A71 /* sr_rt.c in Sources */ = {isa = PBXBuildFile; fileRef = 6ADF452111712EB300911A71 /* sr_rt.c */; };
 		6ADF452C11712EB300911A71 /* sr_vns_comm.c in Sources */ = {isa = PBXBuildFile; fileRef = 6ADF452311712EB300911A71 /* sr_vns_comm.c */; };
+		6AE6A9C9118389CB000552AC /* dlinklist.c in Sources */ = {isa = PBXBuildFile; fileRef = 6AE6A9C8118389CB000552AC /* dlinklist.c */; };
 		6AFE1CC31171399800364BC4 /* auth_key in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6AFE1CBC1171397600364BC4 /* auth_key */; };
 		6AFE1CC41171399800364BC4 /* rtable in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6AFE1CBD1171397600364BC4 /* rtable */; };
 /* End PBXBuildFile section */
@@ -57,6 +58,8 @@
 		6ADF452211712EB300911A71 /* sr_rt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sr_rt.h; path = stub_sr/sr_rt.h; sourceTree = "<group>"; };
 		6ADF452311712EB300911A71 /* sr_vns_comm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sr_vns_comm.c; path = stub_sr/sr_vns_comm.c; sourceTree = "<group>"; };
 		6ADF452411712EB300911A71 /* vnscommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vnscommand.h; path = stub_sr/vnscommand.h; sourceTree = "<group>"; };
+		6AE6A9C7118389CB000552AC /* dlinklist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dlinklist.h; sourceTree = "<group>"; };
+		6AE6A9C8118389CB000552AC /* dlinklist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dlinklist.c; sourceTree = "<group>"; };
 		6AFE1CBC1171397600364BC4 /* auth_key */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = auth_key; path = stub_sr/auth_key; sourceTree = "<group>"; };
 		6AFE1CBD1171397600364BC4 /* rtable */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = rtable; path = stub_sr/rtable; sourceTree = "<group>"; };
 		8DD76FB20486AB0100D96B5E /* Router */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Router; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -128,6 +131,8 @@
 			children = (
 				6A578A4A1176A4280085F1E7 /* utils.h */,
 				6ABC0C771175248B006878F8 /* utils.c */,
+				6AE6A9C7118389CB000552AC /* dlinklist.h */,
+				6AE6A9C8118389CB000552AC /* dlinklist.c */,
 			);
 			name = Ours;
 			sourceTree = "<group>";
@@ -237,6 +242,7 @@
 				6ABC0C781175248B006878F8 /* utils.c in Sources */,
 				6A578A4B1176A4280085F1E7 /* sr_arp.c in Sources */,
 				6A578A4C1176A4280085F1E7 /* sr_ip_packet.c in Sources */,
+				6AE6A9C9118389CB000552AC /* dlinklist.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
