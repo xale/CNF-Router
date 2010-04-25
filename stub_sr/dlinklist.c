@@ -123,21 +123,6 @@ dlinklist_node* dlinklist_findcontents(dlinklist* list, void* node_contents, boo
 	return NULL;
 }
 
-void dlinklist_remove(dlinklist* list, void* node_contents)
-{
-	assert(list != NULL);
-	
-	// Find the node with specified contents
-	dlinklist_node* node = dlinklist_find(list, node_contents);
-	
-	// If the node was not found, abort
-	if (node == NULL)
-		return;
-	
-	// Remove the node from the list
-	dlinklist_removenode(list, node);
-}
-
 void dlinklist_removenode(dlinklist* list, dlinklist_node* node)
 {
 	assert(list != NULL);
