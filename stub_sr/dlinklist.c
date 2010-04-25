@@ -85,15 +85,36 @@ void dlinklist_addnode(dlinklist* list, dlinklist_node* node)
 	list->count++;
 }
 
-dlinklist_node* dlinklist_find(dlinklist* list, void* node_contents)
+dlinklist_node* dlinklist_find(dlinklist* list, bool (*predicate)(void*))
 {
 	assert(list != NULL);
+	assert(predicate != NULL);
 	
-	// Iterate over the list, looking for the node with the specified contents
+	// Iterate over the list, looking for a node for which the predicate returns true
 	dlinklist_node* node = list->head;
 	while (node != NULL)
 	{
-		if (node->contents == node_contents)
+		// Check if this node contains the specified contents 
+		if (predicate(node->contents))
+			return node;
+		
+		node = node->next;
+	}
+	
+	return NULL;
+}
+
+dlinklist_node* dlinklist_findcontents(dlinklist* list, void* node_contents, bool (*compare)(void*, void*))
+{
+	assert(list != NULL);
+	assert(compare != NULL);
+	
+	// Iterate over the list
+	dlinklist_node* node = list->head;
+	while (node != NULL)
+	{
+		// Check if this node's contents are equal to the contents to find when compared
+		if (compare(node->contents, node_contents))
 			return node;
 		
 		node = node->next;

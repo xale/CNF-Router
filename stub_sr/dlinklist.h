@@ -6,6 +6,8 @@
  *
  */
 
+#include <stdbool.h>
+
 typedef struct dlinklist_node
 {
 	void* contents;
@@ -32,8 +34,11 @@ dlinklist_node* dlinklist_add(dlinklist* list, void* node_contents);
 // Adds the specified node to the end of the list
 void dlinklist_addnode(dlinklist* list, dlinklist_node* node);
 
-// Finds the node in the list that has the specified contents, (by literal pointer comparison) or NULL if no such node is found
-dlinklist_node* dlinklist_find(dlinklist* list, void* node_contents);
+// Finds the node in the list for whose contents the provided function returns true
+dlinklist_node* dlinklist_find(dlinklist* list, bool (*predicate)(void*));
+
+// Finds the node in the list that has the specified contents, using the provided comparison function to test equality, or NULL if no such node is found
+dlinklist_node* dlinklist_findcontents(dlinklist* list, void* node_contents, bool (*compare)(void*, void*));
 
 // Finds and removes the node with the specified contents from the list (calls dlinklist_find())
 void dlinklist_remove(dlinklist* list, void* node_contents);
