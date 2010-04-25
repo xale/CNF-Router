@@ -50,7 +50,7 @@ dlinklist_node* dlinklist_add(dlinklist* list, void* node_contents)
 	
 	// Create a new node, wrapping the provided contents
 	dlinklist_node* newNode = calloc(1, sizeof(dlinklist_node));
-	if (newNode = NULL)
+	if (newNode == NULL)
 		return NULL;
 	
 	// Insert the contents of node
