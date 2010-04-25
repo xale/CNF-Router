@@ -6,8 +6,6 @@
  *
  */
 
-#include <stdbool.h>
-
 typedef struct dlinklist_node
 {
 	void* contents;
