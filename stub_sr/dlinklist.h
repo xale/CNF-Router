@@ -6,6 +6,9 @@
  *
  */
 
+#ifndef _DLINKLIST_H
+#define _DLINKLIST_H
+
 #include <stdbool.h>
 
 typedef struct dlinklist_node
@@ -42,3 +45,5 @@ dlinklist_node* dlinklist_findcontents(dlinklist* list, void* node_contents, boo
 
 // Removes the specified node from the list
 void dlinklist_removenode(dlinklist* list, dlinklist_node* node);
+
+#endif // _DLINKLIST_H
