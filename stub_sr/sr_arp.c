@@ -9,49 +9,55 @@
 #include "sr_protocol.h"
 #include "sr_arp.h"
 
-struct arp_entry* look_up_in_cache(const struct arp_table *arp_cache, uint32_t ip)
+bool arp_compare_ip(void* entry, void* ipPtr)
 {
-	struct arp_entry *arp_entry;
-	for (
-			arp_entry = arp_cache->entry;
-			arp_entry != NULL && arp_entry->ip != ip;
-			arp_entry = arp_entry->next
-		);
-	return arp_entry;
+	return (((arp_entry*)entry)->ip == *((uint32_t*)ipPtr));
 }
 
-void add_cache_entry(struct arp_table* arp_cache, const uint32_t ip, const uint8_t *const mac)
+arp_entry* look_up_in_cache(const arp_table *arp_cache, uint32_t ip)
 {
 	assert(arp_cache != NULL);
-	struct arp_entry* arp;
-	struct arp_entry* new_arp;
-	arp = look_up_in_cache(arp_cache, ip);
-	if (arp == NULL)
+	
+	// Attempt to find an entry in the cache with the specified IP address
+	dlinklist_node* entry = dlinklist_find(arp_cache->entries, &ip, arp_compare_ip);
+	
+	// If no entry exists with this IP, return "not found" (NULL)
+	if (entry == NULL)
+		return NULL;
+	
+	// If the entry exists, but has expired, remove it from the cache and return "not found"
+	// FIXME: WRITEME
+	
+	return entry->contents;
+}
+
+void add_cache_entry(arp_table* arp_cache, const uint32_t ip, const uint8_t *const mac)
+{
+	assert(arp_cache != NULL);
+	
+	// Search for an existing entry in the cache with this IP address
+	arp_entry* entry = look_up_in_cache(arp_cache, ip);
+	
+	// If the entry does not exist, create it
+	if (entry == NULL)
 	{
-		new_arp = malloc(sizeof(struct arp_entry));
-		if (new_arp == NULL)
-		{
-			return;
-		}
-		new_arp->ip = ip;
-		memcpy(new_arp->mac, mac, ETHER_ADDR_LEN);
-		new_arp->next = NULL;
-		// FIXME: set expiry time
-		if (arp_cache->entry == NULL)
-		{
-			arp_cache->entry = new_arp;
-			return;
-		}
-		arp = arp_cache->entry;
-		while (arp->next != NULL)
-		{
-			arp = arp->next;
-		}
-		arp->next = new_arp;
-		return;
+		// Create a new cache entry
+		entry = malloc(sizeof(arp_entry));
+		assert(entry != NULL);
+		entry->ip = ip;
+		memcpy(entry->mac, mac, ETHER_ADDR_LEN);
+		// FIXME: set expiration time
+		
+		// Add the entry to the cache
+		dlinklist_node* node = dlinklist_add(arp_cache->entries, entry);
+		assert(node != NULL);
 	}
-	memcpy(arp->mac, mac, ETHER_ADDR_LEN);
-	// FIXME: update expiry time
+	else
+	{
+		// If the entry already exists, update its information
+		memcpy(entry->mac, mac, ETHER_ADDR_LEN);
+		// FIXME: update expiration time
+	}
 }
 
 void add_to_cache(struct arp_table* arp_cache, const uint8_t *const packet)
