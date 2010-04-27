@@ -37,11 +37,8 @@ dlinklist_node* dlinklist_add(dlinklist* list, void* node_contents);
 // Adds the specified node to the end of the list
 void dlinklist_addnode(dlinklist* list, dlinklist_node* node);
 
-// Finds the node in the list for whose contents the provided function returns true
-dlinklist_node* dlinklist_find(dlinklist* list, bool (*predicate)(void*));
-
-// Finds the node in the list that has the specified contents, using the provided comparison function to test equality, or NULL if no such node is found
-dlinklist_node* dlinklist_findcontents(dlinklist* list, void* node_contents, bool (*compare)(void*, void*));
+// Finds the node in the list that returns true when compared to the specified value using the specified comparator, or NULL if no such node exists
+dlinklist_node* dlinklist_find(dlinklist* list, void* compare_value, bool (*compare)(void*, void*));
 
 // Removes the specified node from the list
 void dlinklist_removenode(dlinklist* list, dlinklist_node* node);
