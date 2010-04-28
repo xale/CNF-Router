@@ -8,8 +8,9 @@
 #include "sr_router.h"
 #include "sr_protocol.h"
 #include "sr_arp.h"
+#include "sr_icmp_packet.h"
 
-uint16_t checksum(const struct ip *const ip)
+uint16_t ip_checksum(const struct ip *const ip)
 {
 	// header checksum adapted from
 	// http://www.netrino.com/Embedded-Systems/How-To/Additive-Checksums
@@ -59,28 +60,32 @@ int send_ip_packet_via_interface_to_route(struct sr_instance * sr, uint8_t *cons
 	return 0;
 }
 
-int forward_ip_packet(struct sr_instance * sr, uint8_t *const packet)
+int forward_ip_packet(struct sr_instance* sr, uint8_t *const packet)
 {
-	struct sr_ethernet_hdr *eth_header = (struct sr_ethernet_hdr *) packet;
 	struct ip *ip = (struct ip *) (packet + sizeof(struct sr_ethernet_hdr));
 	
-	if (ip->ip_ttl == 0) // do not forward; send icmp packet back
+	// Verify the checksum of the incoming packet
+	uint16_t checksum_old = ip->ip_sum;
+	// FIXME: perform checksum verification
+	
+	// Check if the packet's TTL has expired
+	if (ip->ip_ttl <= 1)
 	{
+		// Do not forward packet; send ICMP "Time Exceeded" reply to origin host
+		send_icmp_ttl_expired_packet(sr, packet);
+		return -1;
 	}
 	
+	// Decrement the TTL
 	--ip->ip_ttl;
 	
-	uint16_t checksum_old = ip->ip_sum;
+	// Clear and recompute the IP checksum
 	ip->ip_sum = 0;
-	uint16_t checksum_new = checksum(ip);
-	if (checksum_old != checksum_new) // checksums don't match
-	{
-	}
-	ip->ip_sum = checksum_new; // FIXME maybe should be hton or something
-
+	ip->ip_sum = ip_checksum(ip);
+	
 	struct sr_rt *route = find_route_by_ip(sr, ip->ip_dst.s_addr);
 	struct sr_if *iface = sr_get_interface(sr, route->interface);
-
+	
 	printf("Going to send_ip_packet_via_interface_to_route %s.\n", iface->name);
 	send_ip_packet_via_interface_to_route(sr, packet, iface, route);
 	return 0;

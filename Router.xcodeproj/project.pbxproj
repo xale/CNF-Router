@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		6A578A4B1176A4280085F1E7 /* sr_arp.c in Sources */ = {isa = PBXBuildFile; fileRef = 6A578A461176A4280085F1E7 /* sr_arp.c */; };
 		6A578A4C1176A4280085F1E7 /* sr_ip_packet.c in Sources */ = {isa = PBXBuildFile; fileRef = 6A578A481176A4280085F1E7 /* sr_ip_packet.c */; };
+		6A9533E21188A27700A61DDA /* sr_icmp_packet.c in Sources */ = {isa = PBXBuildFile; fileRef = 6A9533E11188A27700A61DDA /* sr_icmp_packet.c */; };
 		6AB65B981183E5E4002225BB /* dlinklist.c in Sources */ = {isa = PBXBuildFile; fileRef = 6AB65B961183E5E4002225BB /* dlinklist.c */; };
 		6ABC0C781175248B006878F8 /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 6ABC0C771175248B006878F8 /* utils.c */; };
 		6ADF452611712EB300911A71 /* sha1.c in Sources */ = {isa = PBXBuildFile; fileRef = 6ADF451711712EB300911A71 /* sha1.c */; };
@@ -42,6 +43,8 @@
 		6A578A481176A4280085F1E7 /* sr_ip_packet.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sr_ip_packet.c; path = stub_sr/sr_ip_packet.c; sourceTree = "<group>"; };
 		6A578A491176A4280085F1E7 /* sr_ip_packet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sr_ip_packet.h; path = stub_sr/sr_ip_packet.h; sourceTree = "<group>"; };
 		6A578A4A1176A4280085F1E7 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = utils.h; path = stub_sr/utils.h; sourceTree = "<group>"; };
+		6A9533E01188A27700A61DDA /* sr_icmp_packet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sr_icmp_packet.h; path = stub_sr/sr_icmp_packet.h; sourceTree = "<group>"; };
+		6A9533E11188A27700A61DDA /* sr_icmp_packet.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sr_icmp_packet.c; path = stub_sr/sr_icmp_packet.c; sourceTree = "<group>"; };
 		6AB65B961183E5E4002225BB /* dlinklist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dlinklist.c; path = stub_sr/dlinklist.c; sourceTree = "<group>"; };
 		6AB65B971183E5E4002225BB /* dlinklist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dlinklist.h; path = stub_sr/dlinklist.h; sourceTree = "<group>"; };
 		6ABC0C771175248B006878F8 /* utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = utils.c; path = stub_sr/utils.c; sourceTree = "<group>"; };
@@ -113,6 +116,8 @@
 				6A578A461176A4280085F1E7 /* sr_arp.c */,
 				6A578A491176A4280085F1E7 /* sr_ip_packet.h */,
 				6A578A481176A4280085F1E7 /* sr_ip_packet.c */,
+				6A9533E01188A27700A61DDA /* sr_icmp_packet.h */,
+				6A9533E11188A27700A61DDA /* sr_icmp_packet.c */,
 			);
 			name = Packets;
 			sourceTree = "<group>";
@@ -243,6 +248,7 @@
 				6A578A4B1176A4280085F1E7 /* sr_arp.c in Sources */,
 				6A578A4C1176A4280085F1E7 /* sr_ip_packet.c in Sources */,
 				6AB65B981183E5E4002225BB /* dlinklist.c in Sources */,
+				6A9533E21188A27700A61DDA /* sr_icmp_packet.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

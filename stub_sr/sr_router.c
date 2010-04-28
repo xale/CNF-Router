@@ -14,7 +14,6 @@
 #include <stdio.h>
 #include <assert.h>
 
-
 #include "sr_if.h"
 #include "sr_rt.h"
 #include "sr_router.h"
