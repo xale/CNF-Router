@@ -88,7 +88,7 @@ void sr_handlepacket(struct sr_instance* sr,
 			status = arp_reply(sr, packet);
 			if (status != 0)
 			{
-				printf("*** -> Error constructing ARP reply.\n");
+				printf("*** -> Arp not directed at us.\n");
 			}
 			else
 			{
@@ -97,9 +97,14 @@ void sr_handlepacket(struct sr_instance* sr,
 			}
 		}
 	}
+	else if (packet_sent_to_me(sr, packet))
+	{
+		//FIXME: WRITEME
+		// if it's an icmp request, send an icmp reply
+	}
 	else
 	{
-		printf ("Attempting to forward packet to ");
+		printf("Attempting to forward packet to ");
 		print_ip(ip->ip_dst.s_addr);
 		forward_ip_packet(sr, packet);
 	}

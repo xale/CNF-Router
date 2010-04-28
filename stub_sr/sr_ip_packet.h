@@ -7,4 +7,6 @@ int send_ip_packet_via_interface_to_route(const struct sr_instance * sr, uint8_t
 
 int forward_ip_packet(const struct sr_instance *const sr, uint8_t *const packet);
 
+int packet_sent_to_me(const struct sr_instance *const sr, uint8_t *const packet);
+
 #endif // _SR_IP_PACKET_H

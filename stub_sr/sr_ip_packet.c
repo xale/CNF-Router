@@ -85,3 +85,12 @@ int forward_ip_packet(struct sr_instance * sr, uint8_t *const packet)
 	send_ip_packet_via_interface_to_route(sr, packet, iface, route);
 	return 0;
 }
+
+int packet_sent_to_me(const struct sr_instance *const sr, const uint8_t *const packet)
+{
+	struct sr_ethernet_hdr *eth_header = (struct sr_ethernet_hdr *) packet;
+	struct ip *ip = (struct ip *) (packet + sizeof(struct sr_ethernet_hdr));
+
+	const struct sr_if *const iface = get_iface_from_mac(sr, eth_header->ether_dhost);
+	return (ip->ip_dst.s_addr == iface->ip);
+}
