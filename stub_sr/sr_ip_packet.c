@@ -53,8 +53,8 @@ int send_ip_packet_via_interface_to_route(struct sr_instance * sr, uint8_t *cons
 	memcpy(eth_header->ether_shost, iface->addr, ETHER_ADDR_LEN);
 	eth_header->ether_type = htons(ETHERTYPE_IP);
 
-	printf("Actually sending packet of length %d via sr_send_packet.\n", htons(ip->ip_len));
-	sr_send_packet(sr, packet, htons(ip->ip_len), iface->name);
+	printf("Actually sending packet of length %d via sr_send_packet.\n", htons(ip->ip_len) + sizeof(struct sr_ethernet_hdr));
+	sr_send_packet(sr, packet, htons(ip->ip_len) + sizeof(struct sr_ethernet_hdr), iface->name);
 	
 	return 0;
 }
