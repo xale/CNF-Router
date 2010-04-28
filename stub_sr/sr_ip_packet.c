@@ -63,13 +63,13 @@ int forward_ip_packet(struct sr_instance * sr, uint8_t *const packet)
 {
 	struct sr_ethernet_hdr *eth_header = (struct sr_ethernet_hdr *) packet;
 	struct ip *ip = (struct ip *) (packet + sizeof(struct sr_ethernet_hdr));
-
+	
 	if (ip->ip_ttl == 0) // do not forward; send icmp packet back
 	{
 	}
-
+	
 	--ip->ip_ttl;
-
+	
 	uint16_t checksum_old = ip->ip_sum;
 	ip->ip_sum = 0;
 	uint16_t checksum_new = checksum(ip);
