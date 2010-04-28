@@ -32,7 +32,7 @@
 /* forward declare */
 struct sr_if;
 struct sr_rt;
-struct arp_table;
+struct dlinklist;
 
 /* ----------------------------------------------------------------------------
  * struct sr_instance
@@ -53,7 +53,7 @@ struct sr_instance
     struct sr_if* if_list; /* list of interfaces */
     struct sr_rt* routing_table; /* routing table */
     FILE* logfile;
-	struct arp_table* arp_cache;
+	struct dlinklist* arp_cache;
 };
 
 /* -- sr_main.c -- */

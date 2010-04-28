@@ -9,29 +9,37 @@
 #include "sr_protocol.h"
 #include "sr_arp.h"
 
+#define ARP_CACHE_ENTRY_TIMEOUT	600 // 10 Minutes
+
 bool arp_compare_ip(void* entry, void* ipPtr)
 {
 	return (((arp_entry*)entry)->ip == *((uint32_t*)ipPtr));
 }
 
-arp_entry* look_up_in_cache(const arp_table *arp_cache, uint32_t ip)
+arp_entry* look_up_in_cache(dlinklist* arp_cache, uint32_t ip)
 {
 	assert(arp_cache != NULL);
 	
 	// Attempt to find an entry in the cache with the specified IP address
-	dlinklist_node* entry = dlinklist_find(arp_cache->entries, &ip, arp_compare_ip);
+	dlinklist_node* cache_entry = dlinklist_find(arp_cache, &ip, arp_compare_ip);
 	
 	// If no entry exists with this IP, return "not found" (NULL)
-	if (entry == NULL)
+	if (cache_entry == NULL)
 		return NULL;
 	
 	// If the entry exists, but has expired, remove it from the cache and return "not found"
-	// FIXME: WRITEME
+	arp_entry* entry = cache_entry->contents;
+	if (entry->expiration_time >= time(NULL))
+	{
+		// Remove the entry from the cache
+		dlinklist_removenode(arp_cache, cache_entry);
+		return NULL;
+	}
 	
-	return entry->contents;
+	return entry;
 }
 
-void add_cache_entry(arp_table* arp_cache, const uint32_t ip, const uint8_t *const mac)
+void add_cache_entry(dlinklist* arp_cache, const uint32_t ip, const uint8_t *const mac)
 {
 	assert(arp_cache != NULL);
 	
@@ -45,22 +53,18 @@ void add_cache_entry(arp_table* arp_cache, const uint32_t ip, const uint8_t *con
 		entry = malloc(sizeof(arp_entry));
 		assert(entry != NULL);
 		entry->ip = ip;
-		memcpy(entry->mac, mac, ETHER_ADDR_LEN);
-		// FIXME: set expiration time
 		
 		// Add the entry to the cache
-		dlinklist_node* node = dlinklist_add(arp_cache->entries, entry);
+		dlinklist_node* node = dlinklist_add(arp_cache, entry);
 		assert(node != NULL);
 	}
-	else
-	{
-		// If the entry already exists, update its information
-		memcpy(entry->mac, mac, ETHER_ADDR_LEN);
-		// FIXME: update expiration time
-	}
+	
+	// Insert/update the entry's MAC address and expiration time
+	memcpy(entry->mac, mac, ETHER_ADDR_LEN);
+	entry->expiration_time = time(NULL) + ARP_CACHE_ENTRY_TIMEOUT;
 }
 
-void add_to_cache(struct arp_table* arp_cache, const uint8_t *const packet)
+void add_to_cache(dlinklist* arp_cache, const uint8_t *const packet)
 {
 	struct sr_arphdr *arp = (struct sr_arphdr *) (packet + sizeof(struct sr_ethernet_hdr));
 	add_cache_entry(arp_cache, arp->ar_sip, arp->ar_sha);
@@ -68,7 +72,7 @@ void add_to_cache(struct arp_table* arp_cache, const uint8_t *const packet)
 
 int arp_lookup(const struct sr_instance *const sr, uint32_t ip, uint8_t *mac)
 {
-	struct arp_entry *entry = look_up_in_cache(sr->arp_cache, ip);
+	arp_entry *entry = look_up_in_cache(sr->arp_cache, ip);
 	if (entry == NULL) // need to send arp request
 	{
 		return -1;

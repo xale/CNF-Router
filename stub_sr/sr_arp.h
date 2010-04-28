@@ -9,23 +9,19 @@
 #include <inttypes.h>
 #endif
 
+#include <time.h>
 #include "dlinklist.h"
 
 typedef struct arp_entry
 {
 	uint32_t ip;
 	uint8_t mac[6];
-	unsigned int expiration_time;
+	time_t expiration_time;
 } arp_entry;
 
-typedef struct arp_table
-{
-	dlinklist* entries;
-} arp_table;
-
-arp_entry* look_up_in_cache(const arp_table* arp_cache, uint32_t ip);
-void add_cache_entry(arp_table* arp_cache, const uint32_t ip, const uint8_t *const mac);
-void add_to_cache(arp_table* arp_cache, const uint8_t *const packet);
+arp_entry* look_up_in_cache(dlinklist* arp_cache, uint32_t ip);
+void add_cache_entry(dlinklist* arp_cache, const uint32_t ip, const uint8_t *const mac);
+void add_to_cache(dlinklist* arp_cache, const uint8_t *const packet);
 void send_arp_request(struct sr_instance *const sr, const uint32_t ip, const struct sr_if* const iface);
 int arp_reply(const struct sr_instance *const sr, uint8_t *const packet);
 
