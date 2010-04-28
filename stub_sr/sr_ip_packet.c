@@ -54,8 +54,8 @@ int send_ip_packet_via_interface_to_route(struct sr_instance * sr, uint8_t *cons
 	memcpy(eth_header->ether_shost, iface->addr, ETHER_ADDR_LEN);
 	eth_header->ether_type = htons(ETHERTYPE_IP);
 
-	printf("Actually sending packet of length %d via sr_send_packet.\n", htons(ip->ip_len));
-	sr_send_packet(sr, packet, htons(ip->ip_len), iface->name);
+	printf("Actually sending packet of length %d via sr_send_packet.\n", htons(ip->ip_len) + sizeof(struct sr_ethernet_hdr));
+	sr_send_packet(sr, packet, htons(ip->ip_len) + sizeof(struct sr_ethernet_hdr), iface->name);
 	
 	return 0;
 }
@@ -89,4 +89,13 @@ int forward_ip_packet(struct sr_instance* sr, uint8_t *const packet)
 	printf("Going to send_ip_packet_via_interface_to_route %s.\n", iface->name);
 	send_ip_packet_via_interface_to_route(sr, packet, iface, route);
 	return 0;
+}
+
+int packet_sent_to_me(const struct sr_instance *const sr, const uint8_t *const packet)
+{
+	struct sr_ethernet_hdr *eth_header = (struct sr_ethernet_hdr *) packet;
+	struct ip *ip = (struct ip *) (packet + sizeof(struct sr_ethernet_hdr));
+
+	const struct sr_if *const iface = get_iface_from_mac(sr, eth_header->ether_dhost);
+	return (ip->ip_dst.s_addr == iface->ip);
 }
