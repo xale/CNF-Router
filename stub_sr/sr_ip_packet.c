@@ -37,12 +37,12 @@ uint16_t checksum(const struct ip *const ip)
 	return ((uint16_t) ~sum);
 }
 
-int send_ip_packet_via_interface(struct sr_instance * sr, uint8_t *const packet, const struct sr_if *const iface)
+int send_ip_packet_via_interface_to_route(struct sr_instance * sr, uint8_t *const packet, const struct sr_if *const iface, const struct sr_rt *const route)
 {
 	struct sr_ethernet_hdr *eth_header = (struct sr_ethernet_hdr *) packet;
 	struct ip *ip = (struct ip *) (packet + sizeof(struct sr_ethernet_hdr));
 
-	int status = arp_lookup(sr, ip->ip_dst.s_addr, eth_header->ether_dhost);
+	int status = arp_lookup(sr, route->gw.s_addr, eth_header->ether_dhost);
 
 	// could do retransmit queue if unknown, but this is simpler
 	if (status != 0)
@@ -53,7 +53,8 @@ int send_ip_packet_via_interface(struct sr_instance * sr, uint8_t *const packet,
 	memcpy(eth_header->ether_shost, iface->addr, ETHER_ADDR_LEN);
 	eth_header->ether_type = htons(ETHERTYPE_IP);
 
-	sr_send_packet(sr, packet, ip->ip_len, iface->name);
+	printf("Actually sending packet of length %d via sr_send_packet.\n", htons(ip->ip_len));
+	sr_send_packet(sr, packet, htons(ip->ip_len), iface->name);
 	
 	return 0;
 }
@@ -80,6 +81,7 @@ int forward_ip_packet(struct sr_instance * sr, uint8_t *const packet)
 	struct sr_rt *route = find_route_by_ip(sr, ip->ip_dst.s_addr);
 	struct sr_if *iface = sr_get_interface(sr, route->interface);
 
-	send_ip_packet_via_interface(sr, packet, iface);
+	printf("Going to send_ip_packet_via_interface_to_route %s.\n", iface->name);
+	send_ip_packet_via_interface_to_route(sr, packet, iface, route);
 	return 0;
 }

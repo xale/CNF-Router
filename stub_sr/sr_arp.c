@@ -29,12 +29,14 @@ arp_entry* look_up_in_cache(dlinklist* arp_cache, uint32_t ip)
 	
 	// If the entry exists, but has expired, remove it from the cache and return "not found"
 	arp_entry* entry = cache_entry->contents;
+	/*
 	if (entry->expiration_time >= time(NULL))
 	{
 		// Remove the entry from the cache
 		dlinklist_removenode(arp_cache, cache_entry);
 		return NULL;
 	}
+	*/
 	
 	return entry;
 }
