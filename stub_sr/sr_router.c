@@ -22,6 +22,7 @@
 #include "sr_ip_packet.h"
 #include "dlinklist.h"
 #include "utils.h"
+#include "sr_icmp_packet.h"
 
 /*--------------------------------------------------------------------- 
  * Method: sr_init(void)
@@ -98,8 +99,10 @@ void sr_handlepacket(struct sr_instance* sr,
 	}
 	else if (packet_sent_to_me(sr, packet))
 	{
-		//FIXME: WRITEME
-		// if it's an icmp request, send an icmp reply
+		struct icmphdr *icmp_hdr = packet + sizeof(struct ip) + sizeof(struct sr_ethernet_hdr);
+		if (icmp_hdr->type == ICMP_ECHO)
+		{
+		}
 	}
 	else
 	{
