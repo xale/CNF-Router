@@ -19,24 +19,24 @@
 
 struct icmphdr
 {
-	u_int8_t type;        /* message type */
-	u_int8_t code;        /* type sub-code */
-	u_int16_t checksum;
+	uint8_t type;        /* message type */
+	uint8_t code;        /* type sub-code */
+	uint16_t checksum;
 	union
 	{
 		struct
 		{
-			u_int16_t id;
-			u_int16_t sequence;
+			uint16_t id;
+			uint16_t sequence;
 		} echo;         /* echo datagram */
-		u_int32_t   gateway;    /* gateway address */
+		uint32_t   gateway;    /* gateway address */
 		struct
 		{
-			u_int16_t __unused;
-			u_int16_t mtu;
+			uint16_t __unused;
+			uint16_t mtu;
 		} frag;         /* path mtu discovery */
 	} un;
-};
+} __attribute__ ((packed));
 
 #define ICMP_ECHOREPLY      0   /* Echo Reply           */
 #define ICMP_DEST_UNREACH   3   /* Destination Unreachable  */
@@ -83,7 +83,7 @@ struct icmphdr
 #define ICMP_EXC_TTL        0   /* TTL count exceeded       */
 #define ICMP_EXC_FRAGTIME   1   /* Fragment Reass time exceeded */
 
-uint16_t icmp_checksum(uint8_t* icmp_packet, uint32_t length);
+uint16_t icmp_checksum(const uint8_t* const icmp_packet, uint32_t length);
 
 int send_icmp_ttl_expired_packet(const struct sr_instance* const sr, const uint8_t* const expired_packet);
 
