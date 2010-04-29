@@ -29,8 +29,8 @@ uint16_t ip_checksum(const struct ip *const ip)
 	/*
 	 * Use carries to compute 1's complement sum.
 	 */
-	sum = (sum >> 16) + (sum & 0xFFFF);
-	sum += sum >> 16;
+	while ((sum >> 16) > 0)
+		sum = (sum >> 16) + (sum & 0xFFFF);
 
 	/*
 	 * Return the inverted 16-bit result.
@@ -65,8 +65,7 @@ int forward_ip_packet(struct sr_instance* sr, uint8_t *const packet)
 	struct ip *ip = (struct ip *) (packet + sizeof(struct sr_ethernet_hdr));
 	
 	// Verify the checksum of the incoming packet
-	uint16_t checksum_old = ip->ip_sum;
-	if (checksum_old != ip_checksum(ip))
+	if (ip_checksum(ip) != 0xFFFF)
 	{
 		// FIXME: WRITEME
 	}

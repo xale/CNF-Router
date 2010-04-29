@@ -30,12 +30,12 @@ uint16_t icmp_checksum(const uint8_t* const icmp_packet, uint32_t length)
 		sum += bytes[bytes_index];
 	}
 	
-	// Compute one's-complement sum using overflow from 16-bit addition
+	// Compute one's-complement 16-bit sum using overflow from 16-bit addition
 	sum = (sum >> 16) + (sum & 0xFFFF);
 	sum += (sum >> 16);
 	
 	// Invert the result, and return the lower 16 bits
-	return ((uint16_t)~sum);
+	return ((uint16_t) ~sum);
 }
 
 int send_icmp_ttl_expired_packet(const struct sr_instance* sr, const uint8_t* const expired_packet)
