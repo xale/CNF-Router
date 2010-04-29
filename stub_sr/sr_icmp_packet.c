@@ -44,11 +44,10 @@ int send_icmp_ttl_expired_packet(struct sr_instance* sr, const uint8_t* const ex
 	const struct ip* expired_ip_hdr = (const struct ip*)(expired_packet + sizeof(struct sr_ethernet_hdr));
 	
 	// Calculate ICMP packet length
-	uint32_t packet_length = (sizeof(struct sr_ethernet_hdr) + sizeof(struct ip) + sizeof(struct icmphdr) + expired_ip_hdr->ip_len);
+	uint32_t packet_length = (sizeof(struct sr_ethernet_hdr) + sizeof(struct ip) + sizeof(struct icmphdr) + ntohs(expired_ip_hdr->ip_len));
 	
 	// Create the packet
-	uint8_t* packet = malloc(packet_length);
-	assert(packet != NULL);
+	uint8_t packet[UINT16_MAX + sizeof(struct sr_ethernet_hdr)];
 	
 	// Fill in the IP header information
 	struct ip* outgoing_ip_hdr = (struct ip*)(packet + sizeof(struct sr_ethernet_hdr));
@@ -77,13 +76,10 @@ int send_icmp_ttl_expired_packet(struct sr_instance* sr, const uint8_t* const ex
 	
 	// Compute the ICMP checksum
 	outgoing_icmp_hdr->checksum = 0;
-	outgoing_icmp_hdr->checksum = icmp_checksum((uint8_t*)outgoing_icmp_hdr, (sizeof(struct icmphdr) + expired_ip_hdr->ip_hl + 8));
+	outgoing_icmp_hdr->checksum = icmp_checksum((uint8_t*)outgoing_icmp_hdr, (sizeof(struct icmphdr) + ntohs(expired_ip_hdr->ip_len)));
 	
 	// Send the packet (also computes IP checksum)
 	send_ip_packet(sr, packet);
-	
-	// Free the space allocated for the packet
-	free(packet);
 	
 	return 0;
 }

@@ -85,6 +85,7 @@ int forward_ip_packet(struct sr_instance* sr, uint8_t *const packet)
 	if (ip_checksum(ip) != 0x0)
 	{
 		// Verification failed: do not forward corrupted packet
+		printf("Packet's checksum is invalid; dropping.");
 		return -1;
 	}
 	
@@ -92,6 +93,7 @@ int forward_ip_packet(struct sr_instance* sr, uint8_t *const packet)
 	if (ip->ip_ttl <= 1)
 	{
 		// TTL exprired: do not forward packet, send ICMP "Time Exceeded" reply to origin host
+		printf("Packet's TTL has expired; replying with ICMP 'time exceeded'");
 		send_icmp_ttl_expired_packet(sr, packet);
 		return -1;
 	}
