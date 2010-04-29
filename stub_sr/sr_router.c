@@ -102,6 +102,14 @@ void sr_handlepacket(struct sr_instance* sr,
 		struct icmphdr *icmp_hdr = packet + sizeof(struct ip) + sizeof(struct sr_ethernet_hdr);
 		if (icmp_hdr->type == ICMP_ECHO)
 		{
+			icmp_hdr->type = ICMP_ECHOREPLY;
+			uint32_t addr = ip->ip_dst.s_addr;
+			ip->ip_dst.s_addr = ip->ip_src.s_addr;
+			ip->ip_src.s_addr = addr;
+			printf("Pong.\n");
+			printf("Sending icmp echo reply to ");
+			print_ip(ntohl(addr));
+			forward_ip_packet(sr, packet);
 		}
 	}
 	else

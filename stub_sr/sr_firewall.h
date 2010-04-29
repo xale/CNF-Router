@@ -10,4 +10,10 @@ struct firewall_entry
 	uint16_t dstPort;
 };
 
+struct flow_entry
+{
+	struct firewall_entry entry;
+	uint32_t expiration;
+};
+
 #endif
