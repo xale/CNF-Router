@@ -11,7 +11,7 @@
 
 #define ARP_CACHE_ENTRY_TIMEOUT	600 // 10 Minutes
 
-bool arp_compare_ip(void* entry, void* ipPtr)
+bool arp_compare_ip(const void* const entry, const void* const ipPtr)
 {
 	return (((arp_entry*)entry)->ip == *((uint32_t*)ipPtr));
 }

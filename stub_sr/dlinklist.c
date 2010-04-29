@@ -85,7 +85,7 @@ void dlinklist_addnode(dlinklist* list, dlinklist_node* node)
 	list->count++;
 }
 
-dlinklist_node* dlinklist_find(dlinklist* list, void* compare_value, bool (*compare)(void*, void*))
+dlinklist_node* dlinklist_find(dlinklist* list, const void* const compare_value, bool (*compare)(const void* const, const void* const))
 {
 	assert(list != NULL);
 	assert(compare != NULL);
