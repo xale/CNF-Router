@@ -28,13 +28,13 @@ struct icmphdr
 		{
 			uint16_t id;
 			uint16_t sequence;
-		} echo;         /* echo datagram */
+		} __attribute__ ((packed)) echo;         /* echo datagram */
 		uint32_t   gateway;    /* gateway address */
 		struct
 		{
 			uint16_t __unused;
 			uint16_t mtu;
-		} frag;         /* path mtu discovery */
+		} __attribute__ ((packed)) frag;         /* path mtu discovery */
 	} un;
 } __attribute__ ((packed));
 
