@@ -197,32 +197,21 @@ void sr_print_if(struct sr_if* iface)
 const struct sr_if* get_interface_from_ip(const struct sr_instance *const sr, const uint32_t ip)
 {
 	const struct sr_if *iface;
-	printf("Trying to match against: ");
-	print_ip(ip);
 	for(
 			iface = sr->if_list;
 			iface != NULL && iface->ip != ip;
 			iface = iface->next
-	   )
-	{
-		printf("Failed match against: ");
-		print_ip(iface->ip);
-	}
+		);
 	return iface;
 }
 
 const struct sr_if* get_iface_from_mac(const struct sr_instance *const sr, const uint8_t *const mac)
 {
-	print_mac(mac);
 	const struct sr_if* iface;
 	for(
 			iface = sr->if_list;
 			iface != NULL && memcmp(iface->addr, mac, ETHER_ADDR_LEN) != 0;
 			iface = iface->next
-	   )
-	{
-		printf("Failed match with ");
-		print_mac(iface->addr);
-	}
+		);
 	return iface;
 }

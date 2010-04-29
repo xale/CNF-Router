@@ -78,12 +78,12 @@ void sr_handlepacket(struct sr_instance* sr,
 //	printf("%u == %u\n", header.ether_type, ETHERTYPE_ARP);
 	if (ntohs(header->ether_type) == ETHERTYPE_ARP)
 	{
-		printf("*** -> Received ARP packet.\n");
-		printf("*** -> Adding to cache.\n");
+		printf("Received ARP packet.\n");
+		printf("Adding to cache.\n");
 		add_to_cache(sr->arp_cache, packet);
 		if (ntohs(arp->ar_op) == ARP_REQUEST)
 		{
-			printf("*** -> Received ARP request.\n");
+			printf("Received ARP request.\n");
 			status = arp_reply(sr, packet);
 			if (status != 0)
 			{
@@ -92,7 +92,7 @@ void sr_handlepacket(struct sr_instance* sr,
 			else
 			{
 				sr_send_packet(sr, packet, 42, interface);
-				printf("*** -> Sent ARP reply.\n");
+				printf("Sent ARP reply.\n");
 			}
 		}
 	}
