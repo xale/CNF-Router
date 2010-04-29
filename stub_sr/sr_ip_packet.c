@@ -65,15 +65,16 @@ int forward_ip_packet(struct sr_instance* sr, uint8_t *const packet)
 	struct ip *ip = (struct ip *) (packet + sizeof(struct sr_ethernet_hdr));
 	
 	// Verify the checksum of the incoming packet
-	if (ip_checksum(ip) != 0xFFFF)
+	if (ip_checksum(ip) != 0x0)
 	{
-		// FIXME: WRITEME
+		// Verification failed: do not forward corrupted packet
+		return -1;
 	}
 	
 	// Check if the packet's TTL has expired
 	if (ip->ip_ttl <= 1)
 	{
-		// Do not forward packet; send ICMP "Time Exceeded" reply to origin host
+		// TTL exprired: do not forward packet, send ICMP "Time Exceeded" reply to origin host
 		send_icmp_ttl_expired_packet(sr, packet);
 		return -1;
 	}
