@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6A0379B7118A444B00672AEC /* sr_firewall.c in Sources */ = {isa = PBXBuildFile; fileRef = 6A0379B5118A444B00672AEC /* sr_firewall.c */; };
 		6A578A4B1176A4280085F1E7 /* sr_arp.c in Sources */ = {isa = PBXBuildFile; fileRef = 6A578A461176A4280085F1E7 /* sr_arp.c */; };
 		6A578A4C1176A4280085F1E7 /* sr_ip_packet.c in Sources */ = {isa = PBXBuildFile; fileRef = 6A578A481176A4280085F1E7 /* sr_ip_packet.c */; };
 		6A9533E21188A27700A61DDA /* sr_icmp_packet.c in Sources */ = {isa = PBXBuildFile; fileRef = 6A9533E11188A27700A61DDA /* sr_icmp_packet.c */; };
@@ -38,6 +39,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		6A0379B5118A444B00672AEC /* sr_firewall.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sr_firewall.c; path = stub_sr/sr_firewall.c; sourceTree = "<group>"; };
+		6A0379B6118A444B00672AEC /* sr_firewall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sr_firewall.h; path = stub_sr/sr_firewall.h; sourceTree = "<group>"; };
 		6A578A461176A4280085F1E7 /* sr_arp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sr_arp.c; path = stub_sr/sr_arp.c; sourceTree = "<group>"; };
 		6A578A471176A4280085F1E7 /* sr_arp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sr_arp.h; path = stub_sr/sr_arp.h; sourceTree = "<group>"; };
 		6A578A481176A4280085F1E7 /* sr_ip_packet.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sr_ip_packet.c; path = stub_sr/sr_ip_packet.c; sourceTree = "<group>"; };
@@ -96,6 +99,7 @@
 				6ADF451D11712EB300911A71 /* sr_main.c */,
 				6A578A511176A5210085F1E7 /* Router */,
 				6A578A4D1176A4360085F1E7 /* Packets */,
+				6A0379B4118A443600672AEC /* Firewall */,
 				6A578A4E1176A4420085F1E7 /* Miscellaneous */,
 			);
 			name = Source;
@@ -107,6 +111,15 @@
 				8DD76FB20486AB0100D96B5E /* Router */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		6A0379B4118A443600672AEC /* Firewall */ = {
+			isa = PBXGroup;
+			children = (
+				6A0379B6118A444B00672AEC /* sr_firewall.h */,
+				6A0379B5118A444B00672AEC /* sr_firewall.c */,
+			);
+			name = Firewall;
 			sourceTree = "<group>";
 		};
 		6A578A4D1176A4360085F1E7 /* Packets */ = {
@@ -249,6 +262,7 @@
 				6A578A4C1176A4280085F1E7 /* sr_ip_packet.c in Sources */,
 				6AB65B981183E5E4002225BB /* dlinklist.c in Sources */,
 				6A9533E21188A27700A61DDA /* sr_icmp_packet.c in Sources */,
+				6A0379B7118A444B00672AEC /* sr_firewall.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
