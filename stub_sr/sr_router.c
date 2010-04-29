@@ -74,7 +74,6 @@ void sr_handlepacket(struct sr_instance* sr,
 	struct sr_arphdr *arp = (struct sr_arphdr *) (packet + sizeof(struct sr_ethernet_hdr));
 	struct ip *ip = (struct ip *) (packet + sizeof(struct sr_ethernet_hdr));
 
-	uint8_t mac[6];
 	int status;
 //	printf("%u == %u\n", header.ether_type, ETHERTYPE_ARP);
 	if (ntohs(header->ether_type) == ETHERTYPE_ARP)
@@ -99,7 +98,7 @@ void sr_handlepacket(struct sr_instance* sr,
 	}
 	else if (packet_sent_to_me(sr, packet))
 	{
-		struct icmphdr *icmp_hdr = packet + sizeof(struct ip) + sizeof(struct sr_ethernet_hdr);
+		struct icmphdr *icmp_hdr = (struct icmphdr*)(packet + sizeof(struct ip) + sizeof(struct sr_ethernet_hdr));
 		if (icmp_hdr->type == ICMP_ECHO)
 		{
 			icmp_hdr->type = ICMP_ECHOREPLY;
