@@ -101,18 +101,9 @@ void sr_handlepacket(struct sr_instance* sr,
 		struct icmphdr *icmp_hdr = (struct icmphdr*)(packet + sizeof(struct ip) + sizeof(struct sr_ethernet_hdr));
 		if (icmp_hdr->type == ICMP_ECHO)
 		{
-			icmp_hdr->type = ICMP_ECHOREPLY;
-			uint32_t addr = ip->ip_dst.s_addr;
-			ip->ip_dst.s_addr = ip->ip_src.s_addr;
-			ip->ip_src.s_addr = addr;
-			ip->ip_ttl = 64;
-			icmp_hdr->checksum = htons(0);
-			// compute the checksum including the data
-			icmp_hdr->checksum = icmp_checksum(icmp_hdr, ntohs(ip->ip_len) - sizeof(struct ip));
-			printf("Pong.\n");
 			printf("Sending icmp echo reply to ");
-			print_ip(ntohl(addr));
-			send_ip_packet(sr, packet);
+			print_ip(ntohl(ip->ip_src.s_addr));
+			send_icmp_echo_reply_packet(sr, packet);
 		}
 	}
 	else

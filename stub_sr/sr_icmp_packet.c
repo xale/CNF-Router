@@ -83,3 +83,22 @@ int send_icmp_ttl_expired_packet(struct sr_instance* sr, const uint8_t* const ex
 	
 	return 0;
 }
+
+int send_icmp_echo_reply_packet(struct sr_instance* const sr, uint8_t* const echo_request_packet)
+{
+	struct ip* ip = (struct ip*)(echo_request_packet + sizeof(struct sr_ethernet_hdr));
+	struct icmphdr* icmp_hdr = (struct icmphdr*)(echo_request_packet + sizeof(struct sr_ethernet_hdr) + sizeof(struct ip));
+	
+	icmp_hdr->type = ICMP_ECHOREPLY;
+	uint32_t addr = ip->ip_dst.s_addr;
+	ip->ip_dst.s_addr = ip->ip_src.s_addr;
+	ip->ip_src.s_addr = addr;
+	ip->ip_ttl = 64;
+	
+	// Clear and compute the checksum including the data
+	icmp_hdr->checksum = htons(0);
+	icmp_hdr->checksum = icmp_checksum((uint8_t*)icmp_hdr, ntohs(ip->ip_len) - sizeof(struct ip));
+	
+	// Send the echo reply
+	return send_ip_packet(sr, echo_request_packet);
+}
