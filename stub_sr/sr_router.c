@@ -105,10 +105,14 @@ void sr_handlepacket(struct sr_instance* sr,
 			uint32_t addr = ip->ip_dst.s_addr;
 			ip->ip_dst.s_addr = ip->ip_src.s_addr;
 			ip->ip_src.s_addr = addr;
+			ip->ip_ttl = 64;
+			icmp_hdr->checksum = htons(0);
+			// compute the checksum including the data
+			icmp_hdr->checksum = icmp_checksum(icmp_hdr, ntohs(ip->ip_len) - sizeof(struct ip));
 			printf("Pong.\n");
 			printf("Sending icmp echo reply to ");
 			print_ip(ntohl(addr));
-			forward_ip_packet(sr, packet);
+			send_ip_packet(sr, packet);
 		}
 	}
 	else
