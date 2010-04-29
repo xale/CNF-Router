@@ -38,7 +38,7 @@ uint16_t icmp_checksum(const uint8_t* const icmp_packet, uint32_t length)
 	return ((uint16_t) ~sum);
 }
 
-int send_icmp_ttl_expired_packet(const struct sr_instance* sr, const uint8_t* const expired_packet)
+int send_icmp_ttl_expired_packet(struct sr_instance* sr, const uint8_t* const expired_packet)
 {
 	const struct sr_ethernet_hdr* expired_eth_hdr = (const struct sr_ethernet_hdr*)(expired_packet);
 	const struct ip* expired_ip_hdr = (const struct ip*)(expired_packet + sizeof(struct sr_ethernet_hdr));
@@ -66,10 +66,6 @@ int send_icmp_ttl_expired_packet(const struct sr_instance* sr, const uint8_t* co
 	outgoing_ip_hdr->ip_src.s_addr = interface->ip;
 	outgoing_ip_hdr->ip_dst.s_addr = expired_ip_hdr->ip_src.s_addr;
 	
-	// Clear and compute the IP header checksum
-	outgoing_ip_hdr->ip_sum = 0;
-	outgoing_ip_hdr->ip_sum = ip_checksum(outgoing_ip_hdr);
-	
 	// Fill the ICMP header information
 	struct icmphdr* outgoing_icmp_hdr = (struct icmphdr*)(packet + sizeof(struct sr_ethernet_hdr) + sizeof(struct ip));
 	outgoing_icmp_hdr->type = ICMP_TIME_EXCEEDED;
@@ -83,12 +79,8 @@ int send_icmp_ttl_expired_packet(const struct sr_instance* sr, const uint8_t* co
 	outgoing_icmp_hdr->checksum = 0;
 	outgoing_icmp_hdr->checksum = icmp_checksum((uint8_t*)outgoing_icmp_hdr, (sizeof(struct icmphdr) + expired_ip_hdr->ip_hl + 8));
 	
-	// Determine routing information for the outgoing packet
-	struct sr_rt *route = find_route_by_ip(sr, outgoing_ip_hdr->ip_dst.s_addr);
-	struct sr_if *iface = sr_get_interface(sr, route->interface);
-	
-	// Send the packet
-	send_ip_packet_via_interface_to_route(sr, packet, iface, route);
+	// Send the packet (also computes IP checksum)
+	send_ip_packet(sr, packet);
 	
 	// Free the space allocated for the packet
 	free(packet);

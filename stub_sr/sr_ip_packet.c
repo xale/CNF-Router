@@ -9,6 +9,7 @@
 #include "sr_protocol.h"
 #include "sr_arp.h"
 #include "sr_icmp_packet.h"
+#include "sr_ip_packet.h"
 
 uint16_t ip_checksum(const struct ip *const ip)
 {
@@ -38,6 +39,24 @@ uint16_t ip_checksum(const struct ip *const ip)
 	return ((uint16_t) ~sum);
 }
 
+int send_ip_packet(struct sr_instance* sr, uint8_t *const packet)
+{
+	// Locate the IP header
+	struct ip *ip = (struct ip *) (packet + sizeof(struct sr_ethernet_hdr));
+	
+	// Clear and recompute the IP checksum
+	ip->ip_sum = 0;
+	ip->ip_sum = ip_checksum(ip);
+	
+	// Determine routing information for outgoing packet
+	struct sr_rt *route = find_route_by_ip(sr, ip->ip_dst.s_addr);
+	struct sr_if *iface = sr_get_interface(sr, route->interface);
+	
+	// Route and send the packet
+	printf("Going to send_ip_packet_via_interface_to_route %s.\n", iface->name);
+	return send_ip_packet_via_interface_to_route(sr, packet, iface, route);
+}
+
 int send_ip_packet_via_interface_to_route(struct sr_instance * sr, uint8_t *const packet, const struct sr_if *const iface, const struct sr_rt *const route)
 {
 	struct sr_ethernet_hdr *eth_header = (struct sr_ethernet_hdr *) packet;
@@ -55,9 +74,7 @@ int send_ip_packet_via_interface_to_route(struct sr_instance * sr, uint8_t *cons
 	eth_header->ether_type = htons(ETHERTYPE_IP);
 
 	printf("Actually sending packet of length %lu via sr_send_packet.\n", ntohs(ip->ip_len) + sizeof(struct sr_ethernet_hdr));
-	sr_send_packet(sr, packet, ntohs(ip->ip_len) + sizeof(struct sr_ethernet_hdr), iface->name);
-	
-	return 0;
+	return sr_send_packet(sr, packet, ntohs(ip->ip_len) + sizeof(struct sr_ethernet_hdr), iface->name);
 }
 
 int forward_ip_packet(struct sr_instance* sr, uint8_t *const packet)
@@ -82,19 +99,10 @@ int forward_ip_packet(struct sr_instance* sr, uint8_t *const packet)
 	// Decrement the TTL
 	--ip->ip_ttl;
 	
-	// Clear and recompute the IP checksum
-	ip->ip_sum = 0;
-	ip->ip_sum = ip_checksum(ip);
-	
-	struct sr_rt *route = find_route_by_ip(sr, ip->ip_dst.s_addr);
-	struct sr_if *iface = sr_get_interface(sr, route->interface);
-	
-	printf("Going to send_ip_packet_via_interface_to_route %s.\n", iface->name);
-	send_ip_packet_via_interface_to_route(sr, packet, iface, route);
-	return 0;
+	return send_ip_packet(sr, packet);
 }
 
-int packet_sent_to_me(const struct sr_instance *const sr, const uint8_t *const packet)
+int packet_sent_to_me(struct sr_instance *const sr, const uint8_t *const packet)
 {
 	struct sr_ethernet_hdr *eth_header = (struct sr_ethernet_hdr *) packet;
 	struct ip *ip = (struct ip *) (packet + sizeof(struct sr_ethernet_hdr));
