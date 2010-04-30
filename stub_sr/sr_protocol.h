@@ -103,6 +103,42 @@ struct ip
     struct in_addr ip_src, ip_dst;	/* source and dest address */
   } __attribute__ ((packed)) ;
 
+struct tcphdr {
+	uint16_t	th_sport;	/* source port */
+	uint16_t	th_dport;	/* destination port */
+	uint32_t	th_seq;			/* sequence number */
+	uint32_t	th_ack;			/* acknowledgement number */
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+	unsigned int	th_x2:4,	/* (unused) */
+th_off:4;	/* data offset */
+#elif __BYTE_ORDER == __BIG_ENDIAN
+	unsigned int	th_off:4,	/* data offset */
+th_x2:4;	/* (unused) */
+#else
+#error "Byte order not specified"
+#endif
+	uint8_t	th_flags;
+#define	TH_FIN	0x01
+#define	TH_SYN	0x02
+#define	TH_RST	0x04
+#define	TH_PUSH	0x08
+#define	TH_ACK	0x10
+#define	TH_URG	0x20
+#define	TH_ECE	0x40
+#define	TH_CWR	0x80
+#define	TH_FLAGS	(TH_FIN|TH_SYN|TH_RST|TH_ACK|TH_URG|TH_ECE|TH_CWR)
+	uint16_t	th_win;		/* window */
+	uint16_t	th_sum;		/* checksum */
+	uint16_t	th_urp;		/* urgent pointer */
+} __attribute__ ((packed));
+
+struct udphdr {
+	uint16_t	uh_sport;
+	uint16_t	uh_dport;
+	uint16_t	uh_len;
+	uint16_t	uh_cksum;
+} __attribute__ ((packed));
+
 /* 
  *  Ethernet packet header prototype.  Too many O/S's define this differently.
  *  Easy enough to solve that and define it here.

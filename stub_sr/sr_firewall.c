@@ -1,8 +1,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <netinet/in.h>
 
 #include "dlinklist.h"
+#include "sr_protocol.h"
 #include "sr_firewall.h"
 
 #define WILDCARD_VALUE	0
@@ -33,7 +35,7 @@ bool compare_firewall_entries(const void* const t_entry, const void* const s_ent
 	const struct firewall_entry* const table_entry = (struct firewall_entry*)t_entry;
 	const struct firewall_entry* const search_entry = (struct firewall_entry*)s_entry;
 	
-	// For each field in the entry we are searching for, check if the table entry's corresponding field is equal, or a wildcard
+	// For each field in the entry we are searching for, check if the table entry's corresponding field is equal, or a wildcard (port-less protocols are assumed to store a wildcard value for source and destination port)
 	return (((table_entry->srcIP == WILDCARD_VALUE) || (table_entry->srcIP == search_entry->srcIP)) &&
 			((table_entry->dstIP == WILDCARD_VALUE) || (table_entry->dstIP == search_entry->dstIP)) &&
 			((table_entry->protocol == WILDCARD_VALUE) || (table_entry->protocol == search_entry->protocol)) &&
@@ -72,8 +74,41 @@ bool flow_table_allows_entry(dlinklist* flow_table, const struct firewall_entry*
 }
 
 bool firewall_entry_from_packet(const uint8_t* const packet, struct firewall_entry* const entry)
-{	
-	// FIXME: WRITEME
+{
+	struct ip* ip_header = (struct ip*)(packet + sizeof(struct sr_ethernet_hdr));
+	
+	// Fill the source and destination IP addresses
+	entry->srcIP = ntohl(ip_header->ip_src.s_addr);
+	entry->dstIP = ntohl(ip_header->ip_dst.s_addr);
+	
+	// Determine the packet protocol
+	entry->protocol = ip_header->ip_p;
+	
+	// Determine ports on a per-protocol basis
+	switch (entry->protocol)
+	{
+		case IPPROTO_TCP:
+		{
+			// TCP: get port values from the TCP header
+			struct tcphdr* tcp_header = (struct tcphdr*)(packet + sizeof(struct sr_ethernet_hdr) + sizeof(struct ip));
+			entry->srcPort = tcp_header->th_sport;
+			entry->dstPort = tcp_header->th_dport;
+			break;
+		}
+		case IPPROTO_UDP:
+		{
+			// UDP: get port values from UDP header
+			struct udphdr* udp_header = (struct udphdr*)(packet + sizeof(struct sr_ethernet_hdr) + sizeof(struct ip));
+			entry->srcPort = udp_header->uh_sport;
+			entry->dstPort = udp_header->uh_dport;
+			break;
+		}
+		default:
+			// Portless protocols: use wildcards
+			entry->srcPort = WILDCARD_VALUE;
+			entry->dstPort = WILDCARD_VALUE;
+			break;
+	}
 	
 	return true;
 }

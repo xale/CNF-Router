@@ -16,6 +16,7 @@ struct firewall_entry
 void reverse_entry(struct firewall_entry *src, struct firewall_entry *dst);
 
 bool flow_table_allows_entry(dlinklist* flow_table, const struct firewall_entry* const entry);
+bool exceptions_list_allows_entry(const struct firewall_entry* const entry);
 
 bool firewall_entry_from_packet(const uint8_t* const packet, struct firewall_entry* const entry);
 
