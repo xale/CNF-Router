@@ -91,16 +91,16 @@ bool firewall_entry_from_packet(const uint8_t* const packet, struct firewall_ent
 		{
 			// TCP: get port values from the TCP header
 			struct tcphdr* tcp_header = (struct tcphdr*)(packet + sizeof(struct sr_ethernet_hdr) + sizeof(struct ip));
-			entry->srcPort = tcp_header->th_sport;
-			entry->dstPort = tcp_header->th_dport;
+			entry->srcPort = ntohs(tcp_header->th_sport);
+			entry->dstPort = ntohs(tcp_header->th_dport);
 			break;
 		}
 		case IPPROTO_UDP:
 		{
 			// UDP: get port values from UDP header
 			struct udphdr* udp_header = (struct udphdr*)(packet + sizeof(struct sr_ethernet_hdr) + sizeof(struct ip));
-			entry->srcPort = udp_header->uh_sport;
-			entry->dstPort = udp_header->uh_dport;
+			entry->srcPort = ntohs(udp_header->uh_sport);
+			entry->dstPort = ntohs(udp_header->uh_dport);
 			break;
 		}
 		default:
