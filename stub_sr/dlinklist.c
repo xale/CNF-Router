@@ -121,6 +121,7 @@ void dlinklist_removenode(dlinklist* list, dlinklist_node* node)
 		node->next->prev = node->prev;
 	
 	// Free the node
+	free(node->contents);
 	free(node);
 	
 	// Decrement count of nodes in the list
