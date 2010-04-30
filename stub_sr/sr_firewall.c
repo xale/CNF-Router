@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
-#include <netinet/in.h>
+#include <assert.h>
 
 #include "dlinklist.h"
 #include "sr_protocol.h"
@@ -20,7 +20,7 @@ unsigned int number_of_exceptions(void)
 	return sizeof(INBOUND_EXCEPTIONS)/sizeof(struct firewall_entry);
 }
 
-void reverse_entry(struct firewall_entry *src, struct firewall_entry *dst)
+void reverse_entry(const struct firewall_entry* const src, struct firewall_entry* const dst)
 {
 	dst->srcIP = src->dstIP;
 	dst->dstIP = src->srcIP;
@@ -85,9 +85,13 @@ bool exceptions_list_allows_entry(const struct firewall_entry* const entry)
 	return false;
 }
 
-bool firewall_entry_from_packet(const uint8_t* const packet, struct firewall_entry* const entry)
+struct firewall_entry* firewall_entry_from_packet(const uint8_t* const packet)
 {
 	struct ip* ip_header = (struct ip*)(packet + sizeof(struct sr_ethernet_hdr));
+	
+	// Create a firewall entry
+	struct firewall_entry* entry = malloc(sizeof(struct firewall_entry));
+	assert(entry != NULL);
 	
 	// Fill the source and destination IP addresses
 	entry->srcIP = ntohl(ip_header->ip_src.s_addr);
@@ -122,27 +126,47 @@ bool firewall_entry_from_packet(const uint8_t* const packet, struct firewall_ent
 			break;
 	}
 	
-	return true;
+	return entry;
 }
 
-bool add_flow_table_entry(dlinklist* flow_table, struct firewall_entry* const entry)
+bool add_or_replace_flow_table_entries(dlinklist* flow_table, struct firewall_entry* const outgoing_entry)
 {
-	// Check if the flow table is not full
-	if (flow_table->count >= MAX_FLOW_ENTRIES)
+	// Create the incoming-flow entry from the outgoing entry
+	struct firewall_entry* incoming_entry = malloc(sizeof(struct firewall_entry));
+	assert(incoming_entry != NULL);
+	reverse_entry(outgoing_entry, incoming_entry);
+	
+	// Check if the entries are already present in the table
+	dlinklist_node* existing_node = dlinklist_find(flow_table, outgoing_entry, compare_firewall_entries);
+	if (existing_node != NULL)
+	{
+		// Remove the old node
+		dlinklist_removenode(flow_table, existing_node);
+		
+		// Make sure there is a matching incoming-flow entry
+		existing_node = dlinklist_find(flow_table, incoming_entry, compare_firewall_entries);
+		assert(existing_node != NULL);
+		dlinklist_removenode(flow_table, existing_node);
+		
+		// Replace the old entries with the new
+		return ((dlinklist_add(flow_table, outgoing_entry) != NULL) &&
+				(dlinklist_add(flow_table, incoming_entry) != NULL));
+	}
+	
+	// If the entries do not already exist in the table, check that there is space to add two nodes
+	if ((flow_table->count + 2) > MAX_FLOW_ENTRIES)
 	{
 		// Attempt to clean expired entries
 		clean_expired_flow_entries(flow_table);
 		
-		// Check if any space has freed up
-		if (flow_table->count >= MAX_FLOW_ENTRIES)
+		// Check if there is sufficient space to add the new entries
+		if ((flow_table->count + 2) > MAX_FLOW_ENTRIES)
 			return false;
 	}
 	
-	// Set the entry's expiration time
-	entry->expiration = time(NULL) + FLOW_ENTRY_EXPIRATION_TIME;
-	
-	// Add the entry to the table
-	return dlinklist_add(flow_table, entry);
+	// Add the entries to the table
+	return ((dlinklist_add(flow_table, outgoing_entry) != NULL) &&
+			(dlinklist_add(flow_table, incoming_entry) != NULL));
 }
 
 bool expired_flow_entry(const void* const t_entry, const void* const timePtr)
