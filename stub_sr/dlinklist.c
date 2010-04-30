@@ -30,7 +30,7 @@ void dlinklist_destroy(dlinklist* list)
 		// Hold a reference to the next node
 		temp_next = node->next;
 		
-		// Free the node's
+		// Free the node's contents
 		free(node->contents);
 		
 		// Free the node itself
