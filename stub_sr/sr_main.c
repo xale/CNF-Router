@@ -226,6 +226,7 @@ static void sr_destroy_instance(struct sr_instance* sr)
 	
 	// Free linked-list members
 	dlinklist_destroy(sr->arp_cache);
+	dlinklist_destroy(sr->flow_table);
 	
     if(sr->logfile)
     {
