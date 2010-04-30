@@ -12,12 +12,15 @@
 #include "sr_if.h"
 
 #define WILDCARD_VALUE	0
-const unsigned int MAX_FLOW_ENTRIES = 10;  // change to increase number of flows
-const unsigned int FLOW_ENTRY_EXPIRATION_TIME = 60;
-const char* EXTERNAL_INTERFACE_NAME = "eth0";
-const struct firewall_entry INBOUND_EXCEPTIONS[] = // add exceptions in host byte order; 0 is wildcard
+const unsigned int MAX_FLOW_ENTRIES = 10;			// (Number of allowed simultaneous flows * 2)
+const unsigned int FLOW_ENTRY_EXPIRATION_TIME = 60;	// Seconds
+const char* EXTERNAL_INTERFACE_NAME = "eth0";		// One of: eth0, eth1, eth2
+const struct firewall_entry INBOUND_EXCEPTIONS[] =
 {
 	{0,0,0,0,0,0}
+	// Add exceptions in host byte order; wildcard is 0
+	// Format is {source IP, destination IP, IP protocol, source port, destination port, (unused-any value)}
+	// NOTE: Port-less IP protocols (e.g., ICMP) must have 0 (wildcard) for both port numbers
 }; 
 
 unsigned int number_of_exceptions(void)
