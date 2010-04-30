@@ -129,28 +129,28 @@ struct firewall_entry* firewall_entry_from_packet(const uint8_t* const packet)
 	return entry;
 }
 
-bool add_or_replace_flow_table_entries(dlinklist* flow_table, struct firewall_entry* const outgoing_entry)
+bool add_or_replace_flow_table_entries(dlinklist* flow_table, struct firewall_entry* const forward_entry)
 {
 	// Create the incoming-flow entry from the outgoing entry
-	struct firewall_entry* incoming_entry = malloc(sizeof(struct firewall_entry));
-	assert(incoming_entry != NULL);
-	reverse_entry(outgoing_entry, incoming_entry);
+	struct firewall_entry* rev_entry = malloc(sizeof(struct firewall_entry));
+	assert(rev_entry != NULL);
+	reverse_entry(forward_entry, rev_entry);
 	
 	// Check if the entries are already present in the table
-	dlinklist_node* existing_node = dlinklist_find(flow_table, outgoing_entry, compare_firewall_entries);
+	dlinklist_node* existing_node = dlinklist_find(flow_table, forward_entry, compare_firewall_entries);
 	if (existing_node != NULL)
 	{
 		// Remove the old node
 		dlinklist_removenode(flow_table, existing_node);
 		
 		// Make sure there is a matching incoming-flow entry
-		existing_node = dlinklist_find(flow_table, incoming_entry, compare_firewall_entries);
+		existing_node = dlinklist_find(flow_table, rev_entry, compare_firewall_entries);
 		assert(existing_node != NULL);
 		dlinklist_removenode(flow_table, existing_node);
 		
 		// Replace the old entries with the new
-		return ((dlinklist_add(flow_table, outgoing_entry) != NULL) &&
-				(dlinklist_add(flow_table, incoming_entry) != NULL));
+		return ((dlinklist_add(flow_table, forward_entry) != NULL) &&
+				(dlinklist_add(flow_table, rev_entry) != NULL));
 	}
 	
 	// If the entries do not already exist in the table, check that there is space to add two nodes
@@ -165,8 +165,8 @@ bool add_or_replace_flow_table_entries(dlinklist* flow_table, struct firewall_en
 	}
 	
 	// Add the entries to the table
-	return ((dlinklist_add(flow_table, outgoing_entry) != NULL) &&
-			(dlinklist_add(flow_table, incoming_entry) != NULL));
+	return ((dlinklist_add(flow_table, forward_entry) != NULL) &&
+			(dlinklist_add(flow_table, rev_entry) != NULL));
 }
 
 bool expired_flow_entry(const void* const t_entry, const void* const timePtr)
