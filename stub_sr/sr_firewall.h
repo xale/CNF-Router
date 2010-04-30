@@ -2,6 +2,7 @@
 #define _SR_FIREWALL_H
 
 #include <time.h>
+#include "sr_router.h"
 
 extern const unsigned int FLOW_ENTRY_EXPIRATION_TIME;
 
@@ -24,5 +25,8 @@ struct firewall_entry* firewall_entry_from_packet(const uint8_t* const packet);
 bool add_or_replace_flow_table_entries(dlinklist* flow_table, struct firewall_entry* const entry);
 
 void clean_expired_flow_entries(dlinklist* flow_table);
+
+bool arrived_on_external_interface(struct sr_instance *sr, uint8_t *packet);
+unsigned int number_of_exceptions(void);
 
 #endif

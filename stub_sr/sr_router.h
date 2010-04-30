@@ -54,6 +54,7 @@ struct sr_instance
     struct sr_rt* routing_table; /* routing table */
     FILE* logfile;
 	struct dlinklist* arp_cache;
+	struct dlinklist* flow_table;
 };
 
 /* -- sr_main.c -- */

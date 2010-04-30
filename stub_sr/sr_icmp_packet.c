@@ -84,6 +84,52 @@ int send_icmp_ttl_expired_packet(struct sr_instance* sr, const uint8_t* const ex
 	return 0;
 }
 
+int send_icmp_destination_unreachable_packet(struct sr_instance* sr, const uint8_t* const expired_packet, uint8_t code)
+{
+	const struct sr_ethernet_hdr* expired_eth_hdr = (const struct sr_ethernet_hdr*)(expired_packet);
+	const struct ip* expired_ip_hdr = (const struct ip*)(expired_packet + sizeof(struct sr_ethernet_hdr));
+	
+	// Calculate ICMP packet length
+	uint32_t packet_length = (sizeof(struct sr_ethernet_hdr) + sizeof(struct ip) + sizeof(struct icmphdr) + ntohs(expired_ip_hdr->ip_len));
+	
+	// Create the packet
+	uint8_t packet[UINT16_MAX + sizeof(struct sr_ethernet_hdr)];
+	
+	// Fill in the IP header information
+	struct ip* outgoing_ip_hdr = (struct ip*)(packet + sizeof(struct sr_ethernet_hdr));
+	outgoing_ip_hdr->ip_hl = (sizeof(struct ip) / 4);
+	outgoing_ip_hdr->ip_v = 4;
+	outgoing_ip_hdr->ip_tos = 0;
+	outgoing_ip_hdr->ip_len = htons(packet_length - sizeof(struct sr_ethernet_hdr));
+	outgoing_ip_hdr->ip_id = htons(0);
+	outgoing_ip_hdr->ip_off = htons(0);
+	outgoing_ip_hdr->ip_ttl = 255;
+	outgoing_ip_hdr->ip_p =	IPPROTO_ICMP;
+	
+	// Fill in the source and destination IP addresses
+	const struct sr_if* interface = get_iface_from_mac(sr, expired_eth_hdr->ether_dhost);
+	outgoing_ip_hdr->ip_src.s_addr = interface->ip;
+	outgoing_ip_hdr->ip_dst.s_addr = expired_ip_hdr->ip_src.s_addr;
+	
+	// Fill the ICMP header information
+	struct icmphdr* outgoing_icmp_hdr = (struct icmphdr*)(packet + sizeof(struct sr_ethernet_hdr) + sizeof(struct ip));
+	outgoing_icmp_hdr->type = ICMP_DEST_UNREACH;
+	outgoing_icmp_hdr->code = code;
+	memset(&(outgoing_icmp_hdr->un), 0, sizeof(outgoing_icmp_hdr->un));
+	
+	// Fill the remainder of the packet
+	memcpy((packet + sizeof(struct sr_ethernet_hdr) + sizeof(struct ip) + sizeof(struct icmphdr)), expired_ip_hdr, expired_ip_hdr->ip_len);
+	
+	// Compute the ICMP checksum
+	outgoing_icmp_hdr->checksum = 0;
+	outgoing_icmp_hdr->checksum = icmp_checksum((uint8_t*)outgoing_icmp_hdr, (sizeof(struct icmphdr) + ntohs(expired_ip_hdr->ip_len)));
+	
+	// Send the packet (also computes IP checksum)
+	send_ip_packet(sr, packet);
+	
+	return 0;
+}
+
 int send_icmp_echo_reply_packet(struct sr_instance* const sr, uint8_t* const echo_request_packet)
 {
 	struct ip* ip = (struct ip*)(echo_request_packet + sizeof(struct sr_ethernet_hdr));

@@ -2,14 +2,19 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <assert.h>
+#include <netinet/in.h>
+#include <stdbool.h>
+#include <string.h>
 
 #include "dlinklist.h"
 #include "sr_protocol.h"
 #include "sr_firewall.h"
+#include "sr_if.h"
 
 #define WILDCARD_VALUE	0
 const unsigned int MAX_FLOW_ENTRIES = 10;  // change to increase number of flows
 const unsigned int FLOW_ENTRY_EXPIRATION_TIME = 60;
+const char* EXTERNAL_INTERFACE_NAME = "eth0";
 const struct firewall_entry INBOUND_EXCEPTIONS[] = // add exceptions in host byte order; 0 is wildcard
 {
 	{0,0,0,0,0,0}
@@ -20,7 +25,18 @@ unsigned int number_of_exceptions(void)
 	return sizeof(INBOUND_EXCEPTIONS)/sizeof(struct firewall_entry);
 }
 
-void reverse_entry(const struct firewall_entry* const src, struct firewall_entry* const dst)
+bool can_add_flows(dlinklist* flow_table)
+{
+	return flow_table->count + 2 <= MAX_FLOW_ENTRIES;
+}
+
+bool arrived_on_external_interface(struct sr_instance *sr, uint8_t *packet)
+{
+	struct sr_ethernet_hdr *ether = (struct sr_ethernet_hdr*) packet;
+	return (strncmp(EXTERNAL_INTERFACE_NAME, get_iface_from_mac(sr, ether->ether_dhost)->name, sr_IFACE_NAMELEN) == 0);
+}
+
+void reverse_entry(const struct firewall_entry *const src, struct firewall_entry *const dst)
 {
 	dst->srcIP = src->dstIP;
 	dst->dstIP = src->srcIP;

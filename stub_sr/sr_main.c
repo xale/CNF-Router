@@ -255,6 +255,8 @@ static void sr_init_instance(struct sr_instance* sr)
     sr->logfile = 0;
 	sr->arp_cache = dlinklist_init();
 	assert(sr->arp_cache != NULL);
+	sr->flow_table = dlinklist_init();
+	assert(sr->flow_table != NULL);
 } /* -- sr_init_instance -- */
 
 /*-----------------------------------------------------------------------------

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
+#include <time.h>
 
 #include "sr_rt.h"
 #include "sr_if.h"
@@ -10,6 +11,7 @@
 #include "sr_arp.h"
 #include "sr_icmp_packet.h"
 #include "sr_ip_packet.h"
+#include "sr_firewall.h"
 
 uint16_t ip_checksum(const struct ip *const ip)
 {
@@ -76,6 +78,18 @@ int send_ip_packet_via_interface_to_route(struct sr_instance * sr, uint8_t *cons
 	printf("Actually sending packet of length %lu via sr_send_packet.\n", ntohs(ip->ip_len) + sizeof(struct sr_ethernet_hdr));
 	return sr_send_packet(sr, packet, ntohs(ip->ip_len) + sizeof(struct sr_ethernet_hdr), iface->name);
 }
+bool try_add_flow_entry(struct sr_instance *sr, uint8_t *packet, uint8_t icmp_code_on_failure)
+{
+	struct firewall_entry *entry  = firewall_entry_from_packet(packet);
+	entry->expiration = time(NULL) + FLOW_ENTRY_EXPIRATION_TIME;
+	bool status = add_or_replace_flow_table_entries(sr->flow_table, entry);
+	if (!status)
+	{
+		send_icmp_destination_unreachable_packet(sr, packet, icmp_code_on_failure);
+		return false;
+	}
+	return true;
+}
 
 int forward_ip_packet(struct sr_instance* sr, uint8_t *const packet)
 {
@@ -88,7 +102,34 @@ int forward_ip_packet(struct sr_instance* sr, uint8_t *const packet)
 		printf("Packet's checksum is invalid; dropping.");
 		return -1;
 	}
+
+	if (arrived_on_external_interface(sr, packet))
+	{ // do firewally filtery stuff
+		bool status;
+		struct firewall_entry *entry = firewall_entry_from_packet(packet);
+		if (flow_table_allows_entry(sr->flow_table, entry))
+		{
+			goto allowed;
+		}
+		if (exceptions_list_allows_entry(entry))
+		{
+			status = try_add_flow_entry(sr, packet, 1);
+		}
+		if (status)
+		{
+			goto allowed;
+		}
+		return -1; // or something
+	}
+
+	// try to add flow rule; possibly fail to forward with icmp unreachable;
+	int status = try_add_flow_entry(sr, packet, 0);
+	if (!status)
+	{
+		return -1;
+	}
 	
+allowed:
 	// Check if the packet's TTL has expired
 	if (ip->ip_ttl <= 1)
 	{

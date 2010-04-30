@@ -86,6 +86,7 @@ struct icmphdr
 uint16_t icmp_checksum(const uint8_t* const icmp_packet, uint32_t length);
 
 int send_icmp_ttl_expired_packet(struct sr_instance* const sr, const uint8_t* const expired_packet);
+int send_icmp_destination_unreachable_packet(struct sr_instance* sr, const uint8_t* const expired_packet, uint8_t code);
 
 int send_icmp_echo_reply_packet(struct sr_instance* const sr, uint8_t* const echo_request_packet);
 
