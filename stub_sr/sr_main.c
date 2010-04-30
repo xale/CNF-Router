@@ -223,7 +223,10 @@ static void sr_destroy_instance(struct sr_instance* sr)
 {
     /* REQUIRES */
     assert(sr);
-
+	
+	// Free linked-list members
+	dlinklist_destroy(sr->arp_cache);
+	
     if(sr->logfile)
     {
         sr_dump_close(sr->logfile);
