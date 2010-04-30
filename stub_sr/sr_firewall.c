@@ -1,6 +1,6 @@
+#include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
-#include <time.h>
 
 #include "dlinklist.h"
 #include "sr_firewall.h"
@@ -39,6 +39,43 @@ bool compare_firewall_entries(const void* const t_entry, const void* const s_ent
 			((table_entry->protocol == WILDCARD_VALUE) || (table_entry->protocol == search_entry->protocol)) &&
 			((table_entry->srcPort == WILDCARD_VALUE) || (table_entry->srcPort == search_entry->srcPort)) &&
 			((table_entry->dstPort == WILDCARD_VALUE) || (table_entry->dstPort == search_entry->dstPort)));
+}
+
+bool flow_table_allows_entry(dlinklist* flow_table, const struct firewall_entry* const entry)
+{
+	// Search for entries in the flow table that match (via compare_firewall_entries()) the specified entry
+	dlinklist_node* match_node = dlinklist_find(flow_table, entry, compare_firewall_entries);
+	struct firewall_entry* match_entry;
+	time_t time_now = time(NULL);
+	while (match_node != NULL)
+	{
+		match_entry = (struct firewall_entry*)(match_node->contents);
+		
+		// Make sure the entry is not expired
+		if (match_entry->expiration <= time_now)
+		{
+			// Remove the entry from the table
+			dlinklist_removenode(flow_table, match_node);
+			
+			// Search for other matching entries
+			match_node = dlinklist_find(flow_table, entry, compare_firewall_entries);
+		}
+		else
+		{
+			// Valid entry found; allow packet
+			return true;
+		}
+	}
+	
+	// No un-expired entries found
+	return false;
+}
+
+bool firewall_entry_from_packet(const uint8_t* const packet, struct firewall_entry* const entry)
+{	
+	// FIXME: WRITEME
+	
+	return true;
 }
 
 bool expired_flow_entry(const void* const t_entry, const void* const timePtr)

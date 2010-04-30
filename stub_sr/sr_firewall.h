@@ -1,6 +1,8 @@
 #ifndef _SR_FIREWALL_H
 #define _SR_FIREWALL_H
 
+#include <time.h>
+
 struct firewall_entry
 {
 	uint32_t srcIP;
@@ -8,10 +10,14 @@ struct firewall_entry
 	uint8_t  protocol;
 	uint16_t srcPort;
 	uint16_t dstPort;
-	uint32_t expiration;
+	time_t expiration;
 };
 
 void reverse_entry(struct firewall_entry *src, struct firewall_entry *dst);
+
+bool flow_table_allows_entry(dlinklist* flow_table, const struct firewall_entry* const entry);
+
+bool firewall_entry_from_packet(const uint8_t* const packet, struct firewall_entry* const entry);
 
 void clean_expired_flow_entries(dlinklist* flow_table);
 
