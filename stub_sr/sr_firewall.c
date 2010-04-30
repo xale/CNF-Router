@@ -173,13 +173,13 @@ bool add_or_replace_flow_table_entries(dlinklist* flow_table, struct firewall_en
 	}
 	
 	// If the entries do not already exist in the table, check that there is space to add two nodes
-	if ((flow_table->count + 2) > MAX_FLOW_ENTRIES)
+	if (!can_add_flows(flow_table))
 	{
 		// Attempt to clean expired entries
 		clean_expired_flow_entries(flow_table);
 		
 		// Check if there is sufficient space to add the new entries
-		if ((flow_table->count + 2) > MAX_FLOW_ENTRIES)
+		if (!can_add_flows(flow_table))
 			return false;
 	}
 	
