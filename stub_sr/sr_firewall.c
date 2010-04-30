@@ -73,6 +73,18 @@ bool flow_table_allows_entry(dlinklist* flow_table, const struct firewall_entry*
 	return false;
 }
 
+bool exceptions_list_allows_entry(const struct firewall_entry* const entry)
+{
+	unsigned int num_exceptions = number_of_exceptions();
+	for (unsigned int index = 0; index < num_exceptions; index++)
+	{
+		if (compare_firewall_entries(&INBOUND_EXCEPTIONS[index], entry))
+			return true;
+	}
+	
+	return false;
+}
+
 bool firewall_entry_from_packet(const uint8_t* const packet, struct firewall_entry* const entry)
 {
 	struct ip* ip_header = (struct ip*)(packet + sizeof(struct sr_ethernet_hdr));
