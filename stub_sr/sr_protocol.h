@@ -161,6 +161,14 @@ struct sr_ethernet_hdr
 #define IPPROTO_ICMP            0x0001  /* ICMP protocol */
 #endif
 
+#ifndef IPPROTO_TCP
+#define	IPPROTO_TCP		6		/* tcp */
+#endif
+
+#ifndef IPPROTO_UDP
+#define	IPPROTO_UDP		17		/* user datagram protocol */
+#endif
+
 #ifndef ETHERTYPE_IP
 #define ETHERTYPE_IP            0x0800  /* IP protocol */
 #endif
