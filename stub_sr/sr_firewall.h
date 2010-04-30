@@ -19,6 +19,7 @@ bool flow_table_allows_entry(dlinklist* flow_table, const struct firewall_entry*
 bool exceptions_list_allows_entry(const struct firewall_entry* const entry);
 
 bool firewall_entry_from_packet(const uint8_t* const packet, struct firewall_entry* const entry);
+bool add_flow_table_entry(dlinklist* flow_table, struct firewall_entry* const entry);
 
 void clean_expired_flow_entries(dlinklist* flow_table);
 

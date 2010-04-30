@@ -125,6 +125,26 @@ bool firewall_entry_from_packet(const uint8_t* const packet, struct firewall_ent
 	return true;
 }
 
+bool add_flow_table_entry(dlinklist* flow_table, struct firewall_entry* const entry)
+{
+	// Check if the flow table is not full
+	if (flow_table->count >= MAX_FLOW_ENTRIES)
+	{
+		// Attempt to clean expired entries
+		clean_expired_flow_entries(flow_table);
+		
+		// Check if any space has freed up
+		if (flow_table->count >= MAX_FLOW_ENTRIES)
+			return false;
+	}
+	
+	// Set the entry's expiration time
+	entry->expiration = time(NULL) + FLOW_ENTRY_EXPIRATION_TIME;
+	
+	// Add the entry to the table
+	return dlinklist_add(flow_table, entry);
+}
+
 bool expired_flow_entry(const void* const t_entry, const void* const timePtr)
 {
 	const struct firewall_entry* const flow_table_entry = (struct firewall_entry*)t_entry;
